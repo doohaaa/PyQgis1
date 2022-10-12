@@ -164,8 +164,6 @@ for a in feature_dict.values():
                             b[_FLAG_FIELD] == 0)):  ##만약 b의 neighbors_ 중에 a의 원소가 있고, flag==0 이라면
                         ##print("common number is %s" %number)
                         ##print("My list b : %s " %b.attributes()[_WHERE_NEIGHBORS_FIELD])
-                        ###my_list_b = b.attributes()[_WHERE_NEIGHBORS_FIELD].split(',')
-                        ###my_list_a = a.attributes()[_WHERE_NEIGHBORS_FIELD].split(',')
                         ##print(my_list_a)
                         ##print(my_list_b)
 
