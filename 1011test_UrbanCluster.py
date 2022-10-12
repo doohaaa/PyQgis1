@@ -1,4 +1,5 @@
-#Copyright 2022 doohaKIM
+
+Copyright (c) 2022 doohaaa
 
 
 ##300~1500 군집화 되서 5000명 이상인 것들 urban cluster 만들기 (모서리 포함 8개 이웃 고려)
