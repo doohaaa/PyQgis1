@@ -1,6 +1,4 @@
-# MIT License
-# Copyright (c) 2022 doohaKIM
-#All rights reserved
+Copyright (c) 2022 doohaaa
 
 
 ###<< emd_20 부산 클러스터 만들기 작업 >>
