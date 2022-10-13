@@ -1,5 +1,6 @@
 ##<< emd_20 부산 클러스터 만들기 작업 >>##
 
+
 ##<< 레이어 불러오기 >>
 layer = iface.addVectorLayer('C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/original', '', 'ogr')
 
