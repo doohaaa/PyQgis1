@@ -1,4 +1,5 @@
 # Graduated Symbol Renderer
+
 from PyQt5 import QtGui
 layer=iface.activeLayer()
 myVectorLayer = layer
