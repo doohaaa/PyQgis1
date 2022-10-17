@@ -51,7 +51,7 @@ myRangeList.append(myRange4)
 
 myMin = 30000
 myMax = 999999999
-myOpacity = 0.4
+myOpacity = 0.5
 myLabel = 'Group 5'
 myColour = QtGui.QColor('black')
 mySymbol5 = QgsSymbol.defaultSymbol(myVectorLayer.geometryType())
