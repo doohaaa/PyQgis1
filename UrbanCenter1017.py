@@ -32,6 +32,28 @@ _WHERE_IS_CLUSTER_FIELD = 25
 my_list2 = []
 
 
+def select_by_Expression(exp):
+    layer.selectByExpression(exp, QgsVectorLayer.SetSelection)
+
+def create_derived_variable():
+    ##<<  Create a derived variable to find the grid where the faces touch  >>
+    layer_provider = layer.dataProvider()
+    layer_provider.addAttributes([QgsField('grid_num_1', QVariant.Int), QgsField('grid_num_2', QVariant.Int)])
+    layer.updateFields()
+
+    expression1 = QgsExpression('substr("GRID_1K_CD",3,2)')
+    expression2 = QgsExpression('substr("GRID_1K_CD",5,2)')
+
+    context = QgsExpressionContext()
+    context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(layer))
+
+    with edit(layer):
+        for f in layer.getFeatures():
+            context.setFeature(f)
+            f['grid_num_1'] = expression1.evaluate(context)
+            f['grid_num_2'] = expression2.evaluate(context)
+            layer.updateFeature(f)
+
 ##<< Find the adjacent grid with touching faces>>
 def find_adjacent_grid():
     layer.startEditing()
@@ -67,12 +89,13 @@ def find_adjacent_grid():
             # Look up the feature from the dictionary
             intersecting_f = feature_dict[intersecting_id]
 
-            # For our purpose we consider a feature as 'neighbor' if it touches or
-            # intersects a feature. We use the 'disjoint' predicate to satisfy
-            # these conditions. So if a feature is not disjoint, it is a neighbor.
+            # add id in _ID_FIELD
             if (f == intersecting_f):
                 f[_ID_FIELD] = intersecting_id
 
+            # For our purpose we consider a feature as 'neighbor' if it touches or
+            # intersects a feature. We use the 'disjoint' predicate to satisfy
+            # these conditions. So if a feature is not disjoint, it is a neighbor.
             if (not intersecting_f.geometry().disjoint(geom)):
                 # add intersecting grid only touched sides including itself
                 if (f.attributes()[_WHERE_GRID_N_1] == intersecting_f.attributes()[_WHERE_GRID_N_1] or f.attributes()[
@@ -88,7 +111,22 @@ def find_adjacent_grid():
         layer.updateFeature(f)
 
     layer.commitChanges()
-    print('Processing complete.')
+    print('Processing complete. _find_adjacent_grid')
+
+def create_new_field_and_initialization(name,type,value):
+    ##<<  Create new field and initialization  >>
+    layer_provider = layer.dataProvider()
+    layer_provider.addAttributes([QgsField(name, type)])
+    layer.updateFields()
+
+    visited_index = layer.fields().indexFromName(name)
+    attr_map = {}
+    new_value = value
+
+    for line in layer.getFeatures():
+        attr_map[line.id()] = {visited_index: new_value}
+    layer.dataProvider().changeAttributeValues(attr_map)
+    print('Processing complete. _create_new_field_and_initialization')
 
 def integration_neighbors():
     layer = iface.activeLayer()
@@ -142,12 +180,13 @@ def integration_neighbors():
                             layer.updateFeature(b)
 
     layer.commitChanges()
-    print('Processing complete.')
+    print('Processing complete. _integration_neighbors')
 
 def tot_sum():
     # Create new field and initialization
+    layer = iface.activeLayer()
+    layer_provider = layer.dataProvider()
     layer_provider.addAttributes([QgsField('TOT_SUM', QVariant.Int), QgsField('land', QVariant.Int)])
-    layer=iface.activeLayer()
     layer.updateFields()
 
     # Names of the new fields to be added to the layer
@@ -163,18 +202,28 @@ def tot_sum():
 
     land = 0
 
+    # Make one pointer _table
     for a in feature_dict.values():
         sum = 0
         my_list_a = str(a.attributes()[_WHERE_NEIGHBORS_FIELD])
         my_list_a = my_list_a.split(',')
-        if (a.attributes()[_WHERE_FLAG_FIELD] == 0 and len(my_list_a) > 1):  ##flag==0 and have neighbors_
+
+        # flag==0 and have neighbors_ / give an id_field to variable
+        if (a.attributes()[_WHERE_FLAG_FIELD] == 0 and len(my_list_a) > 1):
             number = a.attributes()[_WHERE_ID_FIELD]
+
+            # check array
             for i in range(len(my_list2)):
+                # put id in number2 _array
                 number2 = my_list2[i][0]
                 number2 = int(number2)
+                # match table's id (a) and array's id
                 if (number2 == number):
+                    # check i's neighbors _array
                     for j in range(1, len(my_list2[i])):
+                        # check table
                         for b in feature_dict.values():
+                            # Get the id from the array and the TOT of the id from the table
                             id = int(my_list2[i][j])
                             if (id == b.attributes()[_WHERE_ID_FIELD]):
                                 TOT = b.attributes()[_WHERE_TOT_FIELD]
@@ -189,6 +238,7 @@ def tot_sum():
             land += 1
 
     layer.commitChanges()
+    print('Processing complete. _TOT SUM')
 
 def find_50000above_clusters():
     layer = iface.activeLayer()
@@ -213,16 +263,16 @@ def find_50000above_clusters():
                 layer.updateFeature(a)
 
     layer.commitChanges()
+    print('Processing complete. _find 50000 above cluster')
+
 
 
 ##<< import layer >>
 fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/original'
 layer = iface.addVectorLayer(fn, '', 'ogr')
 
-
 ##<< Select by expression _ "TOT>=1500" >>
-layer.selectByExpression('"TOT">=1500', QgsVectorLayer.SetSelection)
-
+select_by_Expression('"TOT">=1500')
 
 ##<< Save selected part to vector layer >>
 fn1 = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1017test/1017test.shp'
@@ -230,77 +280,34 @@ _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
                                                   fn1,
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
 
-
+##<< import saved vector layer  >>
 layer = iface.addVectorLayer(fn1, '', 'ogr')
 
-
-layer_provider = layer.dataProvider()
-layer_provider.addAttributes([QgsField('grid_num_1', QVariant.Int), QgsField('grid_num_2', QVariant.Int)])
-layer.updateFields()
-
-
-expression1 = QgsExpression('substr("GRID_1K_CD",3,2)')
-expression2 = QgsExpression('substr("GRID_1K_CD",5,2)')
-
-context = QgsExpressionContext()
-context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(layer))
-
-with edit(layer):
-    for f in layer.getFeatures():
-        context.setFeature(f)
-        f['grid_num_1'] = expression1.evaluate(context)
-        f['grid_num_2'] = expression2.evaluate(context)
-        layer.updateFeature(f)
+create_derived_variable()
 
 find_adjacent_grid()
 
 ##<<  Create new field and initialization  >>
-layer_provider = layer.dataProvider()
-layer_provider.addAttributes([QgsField('flag', QVariant.Int)])
-layer.updateFields()
-
-visited_index = layer.fields().indexFromName("flag")
-attr_map = {}
-new_value = 0
-
-for line in layer.getFeatures():
-    attr_map[line.id()] = {visited_index: new_value}
-layer.dataProvider().changeAttributeValues(attr_map)
-print('Processing complete.')
-
+create_new_field_and_initialization("flag",QVariant.Int,0)
 
 integration_neighbors()
 
 tot_sum()
 
-
 ##<<  Add is_cluster field  >>
-# Create new field and initialization
-layer_provider.addAttributes([QgsField('is_cluster', QVariant.Int)])
-layer.updateFields()
-
-visited_index = layer.fields().indexFromName("is_cluster")
-attr_map = {}
-new_value = 0
-
-for line in layer.getFeatures():
-    attr_map[line.id()] = {visited_index: new_value}
-layer.dataProvider().changeAttributeValues(attr_map)
-
+create_new_field_and_initialization("is_cluster",QVariant.Int,0)
 
 find_50000above_clusters()
 
 ##<< Select by expression _ "is_cluster=1" >>
-layer.selectByExpression('"is_cluster"=1', QgsVectorLayer.SetSelection)
-
+select_by_Expression('"is_cluster"=1')
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
                                                   'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1017test/is_cluster_1.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
 
-
-##<< dissolve >> - 속성 테이블 속 tot_sum 은 없어짐, 시각화시 사용
+##<< dissolve >>  - for Visualization
 layer = iface.activeLayer()
 
 _LAND_FIELD = 24
@@ -312,9 +319,7 @@ outfn2 = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍�
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_LAND_FIELD], 'OUTPUT': outfn2})
 
 
+##<<  get dissolved file  >>
+layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
-##<< dissolve 된 파일 가져와 >>
-layer3 = iface.addVectorLayer('C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1017test/dissolve1017.shp', '',
-                              'ogr')
-
-
+print('Processing complete.')
