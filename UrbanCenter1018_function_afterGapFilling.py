@@ -8,6 +8,7 @@ import time
 
 # Names of the fields
 _NAME_FIELD = 'GRID_1K_CD'
+_TOT_FIELD = 'TOT'
 _MIN_ID_FIELD = 'min_id'
 _NEIGHBORS_FIELD = 'neighbors_'
 _ID_FIELD = 'id'
