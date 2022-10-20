@@ -29,42 +29,39 @@ _WHERE_UC_FIELD = 27
 my_list3 = []
 
 
+def create_new_field_and_initialization(name,type,value):
+    ##<<  Create new field and initialization  >>
+    layer_provider = layer.dataProvider()
+    layer_provider.addAttributes([QgsField(name, type)])
+    layer.updateFields()
 
-##<< import layer >>
-fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test/original_copy'  ##already have all attributes
-layer = iface.addVectorLayer(fn, '', 'ogr')
+    visited_index = layer.fields().indexFromName(name)
+    attr_map = {}
+    new_value = value
 
-
-##<< UC field 추가 후 초기화 >>
-# Create new field and initialization
-layer_provider = layer.dataProvider()
-layer_provider.addAttributes([QgsField('uc', QVariant.Int)])
-layer.updateFields()
-
-visited_index = layer.fields().indexFromName("uc")
-attr_map = {}
-new_value = 0
-
-for line in layer.getFeatures():
-    attr_map[line.id()] = {visited_index: new_value}
-layer.dataProvider().changeAttributeValues(attr_map)
+    for line in layer.getFeatures():
+        attr_map[line.id()] = {visited_index: new_value}
+    layer.dataProvider().changeAttributeValues(attr_map)
+    print('Processing complete. _create_new_field_and_initialization')
 
 
 ##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
-layer.startEditing()
+def extract_grid():
 
-# Create a dictionary of all features
-feature_dict = {f.id(): f for f in layer.getFeatures()}
+    layer.startEditing()
 
-for f in feature_dict.values():
-    if (f.attributes()[_WHERE_IS_CLUSTER_FIELD] != 1 and f.attributes()[_WHERE_TOT] >= 300):
-        f[_UC_FIELD] = 1
-        layer.updateFeature(f)
+    # Create a dictionary of all features
+    feature_dict = {f.id(): f for f in layer.getFeatures()}
 
-layer.commitChanges()
-print('Processing complete. _Extract grid')
+    for f in feature_dict.values():
+        if (f.attributes()[_WHERE_IS_CLUSTER_FIELD] != 1 and f.attributes()[_WHERE_TOT_FIELD] >= 300):
+            f[_UC_FIELD] = 1
+            layer.updateFeature(f)
 
-##<< Find the adjacent grid with touching faces>>
+    layer.commitChanges()
+    print('Processing complete. _Extract grid')
+
+##<< Find the adjacent grid>>
 def find_adjacent_grid():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -178,7 +175,7 @@ def integration_neighbors():
                                     layer.updateFeature(a)
                                     layer.updateFeature(b)
 
-    ##layer.commitChanges()
+    layer.commitChanges()
     print('Processing complete. _integration_neighbors')
 
 
@@ -191,7 +188,6 @@ def tot_sum():
     feature_dict = {f.id(): f for f in layer.getFeatures()}
 
     land = 10
-
 
     # Make one pointer _table
     for a in feature_dict.values():
@@ -235,7 +231,7 @@ def tot_sum():
                     layer.updateFeature(a)
 
 
-    ##layer.commitChanges()
+    layer.commitChanges()
     print('Processing complete. _tot_sum')
 
 
@@ -261,16 +257,12 @@ def find_5000above_clusters():
                 a[_IS_CLUSTER_FIELD] = 2
                 layer.updateFeature(a)
 
-    ##layer.commitChanges()
+    layer.commitChanges()
     print('Processing complete. _find 5000 above_clusters')
 
-#############################################################이까지 성공
 
 def select_by_Expression(exp):
     layer.selectByExpression(exp, QgsVectorLayer.SetSelection)
-
-##<< Select by expression _ "is_cluster=2" >>
-select_by_Expression('"is_cluster"=2')
 
 
 def fill_value(name,value):
@@ -284,22 +276,58 @@ def fill_value(name,value):
     print('Processing complete. _create_new_field_and_initialization')
 
 
+###################################################start
+##<< import layer >>
+fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test_UrbanCluster/original_copy'  ##already have all attributes
+layer = iface.addVectorLayer(fn, '', 'ogr')
+
+
+##<< UC field 추가 후 초기화 >>
+##<<  Create new field and initialization  >>
+create_new_field_and_initialization("uc",QVariant.Int,0)
+
+
+##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
+extract_grid()
+
+
+##<< Find the adjacent grid>>
+find_adjacent_grid()
+
+
+##<< neighbors_ 통합    >>
+integration_neighbors()
+
+
+##<< TOT_SUM구하기>>
+tot_sum()
+
+
+##<< 5000이 넘는 Cluster 구하기>>
+find_5000above_clusters()
+
+
+##<< Select by expression _ "is_cluster=2" >>
+select_by_Expression('"is_cluster"=2')
+
+
 ##<< Neighbors initialization >> 필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌
 fill_value(_NEIGHBORS_FIELD,0)
 
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
-                                                  'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test/is_cluster_2.shp',
+                                                  'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test_UrbanCluster/is_cluster_2.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
+
 
 ##<< dissolve >>  - for Visualization
 layer = iface.activeLayer()
 
 import processing
 
-infn = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test/is_cluster_2.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test/urbancluster_dissolve1020.shp"
+infn = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test_UrbanCluster/is_cluster_2.shp"
+outfn2 = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test_UrbanCluster/urbancluster_dissolve1020.shp"
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
@@ -308,3 +336,4 @@ processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 
 layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
 print('Processing complete.')
+
