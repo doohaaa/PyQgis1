@@ -292,6 +292,27 @@ def print_TOT_SUM(fn):
 
 
 
+def setLabel():
+    layer_settings  = QgsPalLayerSettings()
+    text_format = QgsTextFormat()
+
+    text_format.setFont(QFont("Arial", 12))
+    text_format.setSize(6)
+
+    layer_settings.setFormat(text_format)
+
+    layer_settings.fieldName = "land"
+    layer_settings.placement = 2
+
+    layer_settings.enabled = True
+
+    layer_settings = QgsVectorLayerSimpleLabeling(layer_settings)
+    my_layer=iface.activeLayer()
+    #my_layer=QgsVectorLayer('C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test_UrbanCluster/original_copy','','ogr')
+    my_layer.setLabelsEnabled(True)
+    my_layer.setLabeling(layer_settings)
+    my_layer.triggerRepaint()
+
 ###################################################start
 ##<< import layer >>
 fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1024test_UrbanCenter&Cluster/original_copy'  ##already have all attributes
@@ -351,7 +372,7 @@ processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 
 ##<<  get dissolved file  >>
 layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
-print('Processing complete.')
+print('Processing complete._UrbanCluster')
 
 print_TOT_SUM('C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1024test_UrbanCenter&Cluster/original_copy')
 
