@@ -51,7 +51,7 @@ def give_rank():
         layer.updateFeature(a)
 
         for b in feature_dict.values():
-            if (a.attributes()[_WHERE_GIRD_ID_FIELD]==b.attributes()[_WHERE_GRID_ID_FIELD]):
+            if (a.attributes()[_WHERE_GRID_ID_FIELD]==b.attributes()[_WHERE_GRID_ID_FIELD]):
                 neighbors.append(b.attributes()[_WHERE_ID_FIELD])
                 area.append(b.attributes()[_WHERE_AREA_FIELD])
 
