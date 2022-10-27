@@ -130,6 +130,8 @@ def coloring():
 
     myVectorLayer.setRenderer(myRenderer)
     QgsProject.instance().addMapLayer(myVectorLayer)
+    
+    print('Processing complete. _coloring')
 
 
 
