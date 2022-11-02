@@ -1,8 +1,13 @@
 ##<< urban Center 1018_ Algorithms by functions / comments / field status>>
 
 ##Urban Center 1018_ Algorithms 1102
+
+import layer
+
+create_derived_values(_GRID_N_1,_GRID_N_2)
+
 ##면이 닿는 인근격자 구하기 __나와있던 코드에 면으로 닿는 조건만 추가
-def find_adjacent_grid()
+def find_adjacent_grid():
     create spatial index
 
     min_id = 0
@@ -21,9 +26,10 @@ def find_adjacent_grid()
                 neighbors.append(intewewrsecting_id)
         f[neighbors_field] = neighbors
 
+create_new_field and initialization(flag, 0)
 
 #neighbors통합
-def integration_neighbors()
+def integration_neighbors():
     # Loop through all features and find features that have same neighbors
     # (make two pointers to compare)
     for every features(a)
@@ -36,9 +42,8 @@ def integration_neighbors()
                         change a's flag to 1
                         update b's neighbors field to new neighbors(integrated with a)
 
-
 #neighbors_tot의 합
-def tot_sum()
+def tot_sum():
     create new field (TOT_SUM, land)
     remove TOT's missing value
     for every features(a)
@@ -52,8 +57,10 @@ def tot_sum()
             if sum>=50000
                 update a's TOT_SUM field =sum
 
+create_new_field and initialization(is_cluster, 0)
+
 # neighbors_tot의 합
-def find_50000above_clusters()
+def find_50000above_clusters():
     create land_list
     #find 50000 above clusters
     for every features(a)
@@ -65,6 +72,16 @@ def find_50000above_clusters()
             if land_list[b] is same with a's LAND_FIELD
                 update a's cluster field to 1
 
+select_by_Expression('"is_cluster"=1')
+
+##<< Neighbors initialization >> 필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌
+fill_value(_NEIGHBORS_FIELD,0)
+
+##<< Save selected part to vector layer >>
+
+##<< dissolve >>  - for Visualization
+
+##<<  open dissolved file  >>
 
 #########################################################################
 
