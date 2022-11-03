@@ -104,7 +104,7 @@ def find_adjacent_grid():
                     for b in feature_dict.values():
                         if (b.attributes()[_WHERE_ID_FIELD]==intersecting_id):
                             ##print(b.attributes()[_WHERE_ID_FIELD])
-                            if (b.attributes()[_WHERE_IS_CLUSTER_FIELD] != 1):
+                            if (b.attributes()[_WHERE_UC_FIELD] != 0):
                                 neighbors.append(intersecting_id)
 
             # Find min value in neighbors_
