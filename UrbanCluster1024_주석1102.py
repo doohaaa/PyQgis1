@@ -225,15 +225,29 @@ get dissolved file
 ##############################################################################################
 
 ##<<field status>>
+_GAP = gap filling : 1
+       others : 0
+_GRID_N_1 = substr(GRID_1K_CD,3,2)
+_GRID_N_2 = substr(GRID_1K_CD,5,2)
+_NEIGHBORS_FIELD = 0 (initialized)
+_ID_FIELD = null : rural 인것
+    not null : urban center 또는 urban cluster
+_FLAG_FIELD = uc==1인거 다 0으로 업데이트
+       그 후 통합됐으면 1 : UrbanCenter또는 UrbanCluster 중 통합된 거
+            통합 안됐으면 0 :UrbanCenter또는 UrbanCluster가 아니거나 UrbanCenter,
+                           또는 UrbanCluster이고 통합되지 않은 기준 격자 (여기서 tot_sum 이 null 이 아닌경우, 기준격자)
+_TOT_SUM = UrbanCenter나 UrbanCluster의 sum of tot in same land_field
+_LAND_FIELD = urban Center인 것의 번호 와 uc_field가 1인 클러스터의 번호(urban center는 한자리수, uc_field가 1인 격자는 두자리수)
+_IS_CLUSTER_FIELD = 0 : rural, 1:UrbanCenter, 2:UrbanCluster
 _UC_FIELD = tot>=300 and not UrbanCenter : 1
             others : 0
 
-flag = uc==1인거 다 0으로 업데이트
-       그 후 통합됐으면 1 : UrbanCenter또는 UrbanCluster 중 통합된 거
-            통합 안됐으면 0 :UrbanCenter또는 UrbanCluster가 아니거나 UrbanCenter 또는
-                           UrbanCluster이고 통합되지 않은 기준 격자 (여기서 tot_sum 이 null 이 아닌경우, 기준격자)
-id = null : rural 인것
-    not null : urban center 또는 urban cluster
-land = urban Center 나 Urban Cluster 인 것의 번호 (urban center는 한자리수, Urban Cluster는 두자리수)
-is_cluster = 0 : rural, 1:UrbanCenter, 2:UrbanCluster
+
+
+
+
+
+
+
+
 
