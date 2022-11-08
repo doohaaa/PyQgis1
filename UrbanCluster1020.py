@@ -77,7 +77,7 @@ def find_adjacent_grid():
     # Loop through all features and find features that touch each feature
     for f in feature_dict.values():
         geom = f.geometry()
-        # TOT above 1500 and gap filling cells
+        # TOT above 300 and gap filling cells
         if (f.attributes()[_WHERE_UC_FIELD] != 0 ):
             ##print("target field : %s" % f.attributes()[_WHERE_ID_FIELD])
             #initialize flag field
