@@ -68,7 +68,7 @@ def find_adjacent_grid():
 
 
     # 모든 피쳐에 대한 dictionary 생성
-    feature_dict 정의
+    feature_dict 에 f의 id를 키 값으로 하는 f피쳐를 담아
 
     # 공간인덱스 생성
     index = QGS의 공간인덱스
@@ -79,7 +79,7 @@ def find_adjacent_grid():
     min_id=0
 
     # 모든 피쳐를 돌면서 면으로 닿은 인접한 격자 찾기
-    모든 피쳐를 돌면서(f)
+    모든 피쳐를 돌면서(f) _feature_dict 의 값을 돈다
         geom = f의 공간함수 할당 (?)
         #TOT>=1500 인 것과 gap filling 이 된 피쳐들을 대상으로 함
         만약 f의 tot_field가 1500이상이고, gap_field 가 1이라면
@@ -144,7 +144,7 @@ def integration_neighbors():
     layer 편집 시작
 
     # 모든 피쳐들에 대해 dictionary 생성
-    feature_dict 에 f의 id 담아
+    feature_dict 에 f의 id를 키 값으로 하는 f피쳐를 담아
 
     my_list_a 리스트 생성
     my_list_b 리스트 생성
@@ -213,7 +213,7 @@ def tot_sum():
     layer 편집 시작
 
     # 모든 피쳐에 대한 dictionary 생성
-    feature_dict 정의
+    feature_dict 에 f의 id를 키 값으로 하는 f피쳐를 담아
 
     land 0으로 초기화
 
@@ -267,7 +267,7 @@ def find_50000above_clusters():
     layer 편집 시작
 
     # 모든 피쳐에 대한 dictionary 생성
-    feature_dict 정의
+    feature_dict 에 f의 id를 키 값으로 하는 f피쳐를 담아
 
     land_list 배열 생성
     모든 피쳐를 돌면서(a)
