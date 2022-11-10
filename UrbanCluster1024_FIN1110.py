@@ -1,6 +1,6 @@
-##함수 추가, min_id 삭제
+## add function and delete min_id _FIN
 
-##<< emd_20_Busan Making Cluster _Urban Cluster >>##
+## << emd_20_Busan Making Cluster _Urban Cluster >> ##
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
@@ -27,7 +27,7 @@ _WHERE_UC_FIELD = 26
 
 my_list3 = []
 
-## 새로운 필드 만들고 초기화하는 함수
+## Create new field and initialization
 def create_new_field_and_initialization(name,type,value):
     ##<<  Create new field and initialization  >>
     layer_provider = layer.dataProvider()
@@ -96,7 +96,7 @@ def find_adjacent_grid():
                 # intersects a feature. We use the 'disjoint' predicate to satisfy
                 # these conditions. So if a feature is not disjoint, it is a neighbor.
                 if (not intersecting_f.geometry().disjoint(geom) ):
-                    #이웃이 모두 uc==1 을 만족해야 neighbors에 추가
+                    # Add to neighbors when all neighbors satisfy uc==1
                     for b in feature_dict.values():
                         if (b.attributes()[_WHERE_ID_FIELD]==intersecting_id):
                             if (b.attributes()[_WHERE_UC_FIELD] != 0):
@@ -110,7 +110,7 @@ def find_adjacent_grid():
     layer.commitChanges()
     print('Processing complete. _find_adjacent_grid')
 
-##<< neighbors_ 통합 >>
+##<< Integrate neighbors >>
 def integration_neighbors():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -169,7 +169,7 @@ def integration_neighbors():
     layer.commitChanges()
     print('Processing complete. _integration_neighbors')
 
-## 클러스터의 tot의 합을 계산하는 함수
+##<< Calculate the sum of the tot in the cluster >>
 def tot_sum():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -185,9 +185,9 @@ def tot_sum():
         my_list_a = str(a.attributes()[_WHERE_NEIGHBORS_FIELD])
         my_list_a = my_list_a.split(',')
 
-        # TOT>=300 and not Urban Center 인 것들 중
+        # Among the TOT>=300 and not Urban Center
         if (a.attributes()[_WHERE_UC_FIELD] == 1):
-            # a가 통합되지 않은 셀이라면
+            # if a will not be integrated
             if (a.attributes()[_WHERE_FLAG_FIELD] == 0):
                 number = a.attributes()[_WHERE_ID_FIELD]
 
@@ -227,7 +227,7 @@ def tot_sum():
     layer.commitChanges()
     print('Processing complete. _tot_sum')
 
-##<< tot_sum 이 5000이상인 클러스터를 찾는 함수 >>
+##<< Find cluster with more than 5000 tot_sum >>
 def find_5000above_clusters():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -254,11 +254,11 @@ def find_5000above_clusters():
     layer.commitChanges()
     print('Processing complete. _find 5000 above_clusters')
 
-## 표현식으로 피쳐선택
+## Select by Expression
 def select_by_Expression(exp):
     layer.selectByExpression(exp, QgsVectorLayer.SetSelection)
 
-## 필드에 값 채우기
+## Fill value
 def fill_value(name,value):
     visited_index = layer.fields().indexFromName(name)
     attr_map = {}
@@ -269,7 +269,7 @@ def fill_value(name,value):
     layer.dataProvider().changeAttributeValues(attr_map)
     print('Processing complete. _create_new_field_and_initialization')
 
-## TOT_SUM 출력하는 함수
+## Print TOT_SUM
 def print_TOT_SUM(fn):
     layer=QgsVectorLayer(fn, '', 'ogr')
 
@@ -284,7 +284,7 @@ def print_TOT_SUM(fn):
 
     print('Processing complete.')
 
-## 시각화 함수
+## Visualization
 def setLabel():
     layer_settings  = QgsPalLayerSettings()
     text_format = QgsTextFormat()
@@ -314,8 +314,7 @@ def setLabel():
 
 layer = iface.activeLayer()
 
-##<< UC field 추가 후 초기화 >>
-##<<  Create new field and initialization  >>
+##<< Create UC field and initialization to 0 >>
 create_new_field_and_initialization("uc",QVariant.Int,0)
 
 
@@ -327,23 +326,23 @@ extract_grid()
 find_adjacent_grid()
 
 
-##<< neighbors_ 통합 >>
+##<< Integrate neighbors >>
 integration_neighbors()
 
 
-##<< TOT_SUM구하기 >>
+##<< Get TOT_SUM >>
 tot_sum()
 
 
-##<< 5000이 넘는 Cluster 구하기>>
+##<< Find cluster with more than 5000 tot_sum >>
 find_5000above_clusters()
 
 
-##<< Select by expression _ "is_cluster=2" >>
+##<< Select by expression _"is_cluster=2" >>
 select_by_Expression('"is_cluster"=2')
 
 
-##<< Neighbors initialization >> 필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌
+##<< Neighbors initialization >> Need to initialize because field length is not saved as exceeded
 fill_value(_NEIGHBORS_FIELD,0)
 
 
@@ -364,11 +363,11 @@ outfn2 = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/1024test_전국/
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
 
-##<<  get dissolved file  >>
+##<< get dissolved file >>
 layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
 print('Processing complete._UrbanCluster')
 
-##<< UrbanCenter와 UrbanCluster 전체의 TOT_SUM 구하기 >>
+##<< Show TOT_SUM of UrbanCenter and UrbanCluster >>
 print_TOT_SUM('C:/Users/User/Desktop/지역분류체계/urban_emd_20/1024test_전국/original_copy')
 

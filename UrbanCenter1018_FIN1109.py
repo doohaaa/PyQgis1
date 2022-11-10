@@ -1,6 +1,6 @@
-##함수 추가, min_id 삭제
+## add function and delete min_id _FIN
 
-##<< emd_20_Busan Making Cluster >>##
+## << emd_20_Busan Making Cluster >> ##
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
@@ -33,11 +33,11 @@ _WHERE_IS_CLUSTER_FIELD = 25
 
 my_list2 = []
 
-## 표현식으로 피쳐선택
+## Select by Expression
 def select_by_Expression(exp):
     layer.selectByExpression(exp, QgsVectorLayer.SetSelection)
 
-## 파생변수 생성
+## Create derived variable
 def create_derived_variable():
     ##<<  Create a derived variable to find the grid where the faces touch  >>
     layer_provider = layer.dataProvider()
@@ -103,7 +103,7 @@ def find_adjacent_grid():
                             f.attributes()[
                                 _WHERE_GRID_N_2] == intersecting_f.attributes()[_WHERE_GRID_N_2]):
 
-                        #이웃이 모두 tot>=1500 or gap==1 을 만족해야 neighbors에 추가
+                        # Add to neighbors when all neighbors satisfy tot>=1500 or gap==1
                         for b in feature_dict.values():
                             if (b.attributes()[_WHERE_ID_FIELD]==intersecting_id):
                                 if (b.attributes()[_WHERE_TOT_FIELD] >= 1500 or
@@ -118,7 +118,7 @@ def find_adjacent_grid():
     layer.commitChanges()
     print('Processing complete. _find_adjacent_grid')
 
-## 새로운 필드 만들고 초기화하는 함수
+##<< Create new field and initialization >>
 def create_new_field_and_initialization(name,type,value):
     ##<<  Create new field and initialization  >>
     layer_provider = layer.dataProvider()
@@ -134,7 +134,7 @@ def create_new_field_and_initialization(name,type,value):
     layer.dataProvider().changeAttributeValues(attr_map)
     print('Processing complete. _create_new_field_and_initialization')
 
-##<< neighbors_를 통합하는 함수 (클러스터를 생성) >>
+##<< Integrate neighbors >>
 def integration_neighbors():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -193,7 +193,7 @@ def integration_neighbors():
     layer.commitChanges()
     print('Processing complete. _integration_neighbors')
 
-## 클러스터의 tot의 합을 계산하는 함수
+##<< Calculate the sum of the tot in the cluster >>
 def tot_sum():
     # Create new field and initialization
     layer = iface.activeLayer()
@@ -258,7 +258,7 @@ def tot_sum():
     layer.commitChanges()
     print('Processing complete. _tot_sum')
 
-## tot_sum 이 50000이상인 클러스터를 찾는 함수
+##<< Find cluster with more than 50000 tot_sum >>
 def find_50000above_clusters():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -284,7 +284,7 @@ def find_50000above_clusters():
     layer.commitChanges()
     print('Processing complete. _find 50000 above_clusters')
 
-## 필드에 값 채우기
+## Fill value
 def fill_value(name,value):
     visited_index = layer.fields().indexFromName(name)
     attr_map = {}
@@ -316,11 +316,11 @@ find_adjacent_grid()
 create_new_field_and_initialization("flag",QVariant.Int,0)
 
 
-##<< neighbors_ 통합 >>
+##<< Integrate neighbors >>
 integration_neighbors()
 
 
-##<< TOT_SUM구하기 >>
+##<< Get TOT_SUM >>
 tot_sum()
 
 
@@ -328,7 +328,7 @@ tot_sum()
 create_new_field_and_initialization("is_cluster",QVariant.Int,0)
 
 
-##<< 50000이 넘는 Cluster 구하기>>
+##<< Find cluster with more than 50000 tot_sum >>
 find_50000above_clusters()
 
 
@@ -336,7 +336,7 @@ find_50000above_clusters()
 select_by_Expression('"is_cluster"=1')
 
 
-##<< Neighbors initialization >> 필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌
+##<< Neighbors initialization >> Need to initialize because field length is not saved as exceeded
 fill_value(_NEIGHBORS_FIELD,0)
 
 

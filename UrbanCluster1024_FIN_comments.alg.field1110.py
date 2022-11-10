@@ -27,7 +27,7 @@ _WHERE_UC_FIELD = 26
 
 my_list3 = []
 
-## 새로운 필드 만들고 초기화하는 함수
+##<< 새로운 필드 만들고 초기화하는 함수 >>
 def create_new_field_and_initialization(name,type,value):
     #<< 새로운 필드 만들고 초기화 >>
     layer_provider 지정
@@ -58,7 +58,7 @@ def extract_grid():
     layer 변경사항 commit (저장)
     함수가 실행되었음을 알리는 print뮨
 
-##<<인접한 격자 찾기 >>
+##<< 인접한 격자 찾기 >>
 def find_adjacent_grid()
     레이어 지정
     레이어 수정 시작
@@ -94,7 +94,7 @@ def find_adjacent_grid()
 
                 # 편의를 위해 만약 그게 면으로 닿아있거나,
                 # 대각선으로 인접해 있다면 우리는 그 피쳐를 'neighbor'라고 하자.
-                # 우리는 이 조건들을 만족시키기 위해 'disjoint'라는 용어를 사용한다. 만약 피쳐들이 disjoint 되지 않았다면 그건은 neighbor이다.
+                # 우리는 이 조건들을 만족시키기 위해 'disjoint'라는 용어를 사용한다. 만약 피쳐들이 disjoint 되지 않았다면 그것은 neighbor이다.
                 만약 intersecting_f가 neighbors라면
                     # 이웃이 모두 uc==1 을 만독해야 neighbors 리스트에 추가
                     모든 피쳐를 돌면서(b)
@@ -209,7 +209,7 @@ def tot_sum()
                             my_list_3의 i번째 행 요소를 두번째 열부터 돌면서 (j)
                                 # table 체크
                                 모든 피쳐를 돌면서 (b)
-                                    # 매열에서의 id가 table에서의 id와 같다면 table에서 그 id의 tot가져와
+                                    # 배열에서의 id가 table에서의 id와 같다면 table에서 그 id의 tot가져와
                                     id에 my_list3의 i행 j열 요소를 넣어
                                     만약 id가 b의 id_field 와 같다면
                                         b의 tot를 TOT에 넣어
@@ -314,14 +314,13 @@ def setLabel():
 
 레이어 지정
 
-
 ##<< UC field 추가 후 초기화 >>
-##<<  Create new field and initialization  >>
 uc_field 추가 후 0으로 초기화
 
 
 ##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
 extract_grid()
+
 
 ##<< Find the adjacent grid>>
 find_adjacent_grid()
