@@ -96,7 +96,7 @@ def find_adjacent_grid():
 
             # 편의를 위해 만약 그게 면으로 닿아있거나,
             # 대각선으로 인접해 있다면 우리는 그 피쳐를 'neighbor'라고 하자.
-            # 우리는 이 조건들을 만족시키기 위해 'disjoint'라는 용어를 사용한다. 만약 피쳐들이 disjoint 되지 않았다면 그건은 neighbor이다.
+            # 우리는 이 조건들을 만족시키기 위해 'disjoint'라는 용어를 사용한다. 만약 피쳐들이 disjoint 되지 않았다면 그것은 neighbor이다.
             만약 intersecting_f가 neighbors라면
                 # 면으로만 닿은 피쳐를 찾기위해 조건을 추가
                 만약 f의 grid_n_1 field 가 intersecting_f의 grid_n_1 필드와 같거나
@@ -134,7 +134,7 @@ def create_new_field_and_initialization(name,type,value):
     피쳐의 필드값 변경
     함수가 실행되었음을 알리는 print문
 
-## neighbors_를 통합하는 함수 (클러스터를 생성)
+##<< neighbors_를 통합하는 함수 (클러스터를 생성) >>
 def integration_neighbors():
     layer변수에 활성화된 레이어를 담아
     layer 편집 시작
@@ -193,7 +193,7 @@ def integration_neighbors():
     layer 변경사항 commit (저장)
     함수가 실행되었음을 알리는 print문
 
-## 클러스터의 tot의 합을 계산하는 함수
+##<< 클러스터의 tot의 합을 계산하는 함수 >>
 def tot_sum():
     # 새 필드 생성 및 초기화
     layer에 현재 활성화 된 레이어를 넣어
