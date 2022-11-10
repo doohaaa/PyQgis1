@@ -57,7 +57,7 @@ def create_derived_variable():
             f['grid_num_2'] = expression2.evaluate(context)
             layer.updateFeature(f)
 
-##<< Find the adjacent grid with touching faces>>
+##<< Find the adjacent grid with touching faces >>
 def find_adjacent_grid():
     layer.startEditing()
 
@@ -134,7 +134,7 @@ def create_new_field_and_initialization(name,type,value):
     layer.dataProvider().changeAttributeValues(attr_map)
     print('Processing complete. _create_new_field_and_initialization')
 
-## neighbors_를 통합하는 함수 (클러스터를 생성)
+##<< neighbors_를 통합하는 함수 (클러스터를 생성) >>
 def integration_neighbors():
     layer = iface.activeLayer()
     layer.startEditing()
