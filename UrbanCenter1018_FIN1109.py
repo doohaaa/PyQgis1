@@ -282,6 +282,7 @@ def find_50000above_clusters():
                 layer.updateFeature(a)
 
     layer.commitChanges()
+    print('Processing complete. _find 50000 above_clusters')
 
 ## 필드에 값 채우기
 def fill_value(name,value):
@@ -302,32 +303,48 @@ def fill_value(name,value):
 
 layer= iface.activeLayer()
 
+
+##<< create drived_variable >>
 create_derived_variable()
 
+
+##<< Find the adjacent grid >>
 find_adjacent_grid()
 
-##<<  Create new field and initialization  >>
+
+##<< Create new field and initialization >>
 create_new_field_and_initialization("flag",QVariant.Int,0)
 
+
+##<< neighbors_ 통합 >>
 integration_neighbors()
 
+
+##<< TOT_SUM구하기 >>
 tot_sum()
 
-##<<  Add is_cluster field  >>
+
+##<< Add is_cluster field >>
 create_new_field_and_initialization("is_cluster",QVariant.Int,0)
 
+
+##<< 50000이 넘는 Cluster 구하기>>
 find_50000above_clusters()
+
 
 ##<< Select by expression _ "is_cluster=1" >>
 select_by_Expression('"is_cluster"=1')
 
+
 ##<< Neighbors initialization >> 필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌
 fill_value(_NEIGHBORS_FIELD,0)
+
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
                                                   'C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1109test_min_id제거/is_cluster_1.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
+
 
 ##<< dissolve >>  - for Visualization
 layer = iface.activeLayer()
@@ -339,7 +356,8 @@ outfn2 = "C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍�
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
-##<<  get dissolved file  >>
+
+##<< get dissolved file >>
 layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
 print('Processing complete._UrbanCenter')
