@@ -296,7 +296,7 @@ def fill_value(name,value):
     함수가 실행되었음을 알리는 print문
 
 
-#############################################################################################start
+########## start
 # 레이어 추가하는 경우
 
 
@@ -363,7 +363,104 @@ layer3 에 디졸브된 파일 담아
 함수가 실행되었음을 알리는 print문
 
 
-#########################################################################
+##################################################################
+##################################################################
+
+## Urban Center 1018_ alg
+
+import layer
+
+create_derived_values(_GRID_N_1,_GRID_N_2)
+
+
+## 면이 닿는 인근격자 구하기 __나와있던 코드에 면으로 닿는 조건만 추가
+def find_adjacent_grid():
+    create spatial index
+
+    min_id = 0
+
+    # Loop through all features and find features that touch each feature
+    for every features (f)
+        intersecting_ids = intersects grid
+
+        neighbors=[]
+        for intersecting_id in intersecting_ids:
+            intersecting_f = feature_dict[intersecting_id]
+
+            if (f==intersecting_f):
+                f[_ID_FIELD] = intersecting_id
+            if (intersect and touched sides including itself)
+                neighbors.append(intewewrsecting_id)
+        f[neighbors_field] = neighbors
+
+
+## 새 필드 추가 및 초기화
+create_new_field and initialization(flag, 0)
+
+
+## neighbors 통합
+def integration_neighbors():
+    # Loop through all features and find features that have same neighbors
+    # (make two pointers to compare)
+    for every features(a)
+        for every features(b)
+            not the one to compare itself
+                if a and b are not integrated
+                    if (a's neighbors is in b's neighbors and (a and b are not integrated))
+                        integrate a's neighbors and b's neighbors
+                        remove duplicate elements
+                        change a's flag to 1
+                        update b's neighbors field to new neighbors(integrated with a)
+
+
+## neighbors_tot의 합
+def tot_sum():
+    create new field (TOT_SUM, land)
+    remove TOT's missing value
+    for every features(a)
+        sum = 0
+        if(a's flag =0 and have neighbors)
+            match table's id and array's id
+                get that TOT value in table
+                sum += TOT
+                update land field
+            land +=1
+            if sum>=50000
+                update a's TOT_SUM field =sum
+
+
+## 새 필드 추가 및 초기화
+create_new_field and initialization(is_cluster, 0)
+
+
+## neighbors_tot의 합
+def find_50000above_clusters():
+    create land_list
+    #find 50000 above clusters
+    for every features(a)
+        if a's TOT_SUM field >=50000
+            put a's land in land_list
+    #match land_list and table
+    for every featues(a)
+        for land_list(b)
+            if land_list[b] is same with a's LAND_FIELD
+                update a's cluster field to 1
+
+
+## is_cluster 가 1인 피쳐 선택
+select_by_Expression('"is_cluster"=1')
+
+## Neighbors initialization (필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌)
+fill_value(_NEIGHBORS_FIELD,0)
+
+##<< Save selected part to vector layer >>
+
+##<< dissolve >>  - for Visualization
+
+##<<  open dissolved file  >>
+
+
+##################################################################
 ##################################################################
 
 ##<< field status >>
