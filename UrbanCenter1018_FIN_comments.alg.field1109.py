@@ -282,6 +282,7 @@ def find_50000above_clusters():
                 a의 피쳐 업데이트
 
     layer 변경사항 commit (저장)
+    함수가 실행되었음을 알리는 print문
 
 ## 필드에 값 채우기
 def fill_value(name,value):
@@ -302,30 +303,46 @@ def fill_value(name,value):
 
 레이어 지정
 
+
+##<< 파생변수 생성 >>
 파생변수 생성(_GRID_N_1,_GRID_N_2)
 
+
+##<< 인접한 격자 찾기 >>
 find_adjacent_grid()
 
-## 새 필드 생성 및 초기화
+
+##<< 새 필드 생성 및 초기화 >>
 create_new_field and initialization(flag, 0)
-#neighbors통합
+
+
+##<< neighbors 통합 >>
 integration_neighbors()
-#cluster 의 tot_sum 구하기
+
+
+##<< cluster 의 tot_sum 구하기 >>
 tot_sum()
 
-## is_clluster field 생성 및 초기화
+
+##<< is_clluster field 생성 및 초기화 >>
 create_new_field and initialization(is_cluster, 0)
-# neighbors_tot의 합
+
+
+#<< neighbors_tot의 합 >>
 find_50000above_clusters()
 
-## 표현식으로 is_cluster 가 1인것만 선택
+
+##<< 표현식으로 is_cluster 가 1인것만 선택 >>
 select_by_Expression('"is_cluster"=1')
+
 
 ##<< Neighbors initialization >> 필드 길이 초과로 저장 안되기 때문에 초기화 시켜줌
 fill_value(_NEIGHBORS_FIELD,0)
 
+
 ##<< Save selected part to vector layer >>
 선택한 피쳐만 저장
+
 
 
 
@@ -339,17 +356,18 @@ layer 지정
 
 디졸브 진행
 
-## 디졸브 된 파일 가져옴
+
+##<< 디졸브 된 파일 가져옴 >>
 layer3 에 디졸브된 파일 담아
 
 함수가 실행되었음을 알리는 print문
 
 
-
 #########################################################################
 ##################################################################
 
-##<<field status>>
+##<< field status >>
+
 _GAP = gap filling : 1
        others : 0
 _GRID_N_1 = substr(GRID_1K_CD,3,2)
