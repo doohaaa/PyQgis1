@@ -163,10 +163,10 @@ def integration_neighbors():
                             my_list_a 속 값들을 구분자 ','로 나눠서 리스트로 만들어 my_list_a에 넣어줌
 
                             # a의 neighbors을 하나씩 지정해 b의 neighbors 와 비교해봄
-                            my_list_a의 문자열 수 만큼(a의 neighbors) 반복문을 돌고(i)
+                            my_list_a의 문자열 수 만큼(a의 neighbors) 반복문을 돌면서(i)
                                 number 변수에 my_list_a 리스트의 i번째 요소를 넣어 (a의 neighbors 중 하나를 넣어)
-                                my_list_b 에 a의 neighbors_field 속 값들을 문자형으로 바꿔서 넣고
-                                my_list_b 속 값들을 구분자 ','로 나눠서 리스트로 만들어 my_list_a에 넣어줌
+                                my_list_b 에 b의 neighbors_field 속 값들을 문자형으로 바꿔서 넣고
+                                my_list_b 속 값들을 구분자 ','로 나눠서 리스트로 만들어 my_list_b에 넣어줌
 
                                 # Check elements of a_neighbor is in b_neighbors and both of them are unmodified
                                 만약 my_list_b에(b의 neighbors에) number(a의 neighbors중 하나)가 있고, a와 b가 통합되지 않은 셀이라면
@@ -212,7 +212,7 @@ def tot_sum():
     # 모든 피쳐에 대한 dictionary 생성
     feature_dict 에 f의 id를 키 값으로 하는 f피쳐를 담아
 
-    land 0으로 초기화
+    land변수를 0으로 초기화
 
     # 결측치 제거 _tot_field
     모든 피쳐를 돌면서 (a)
@@ -231,8 +231,8 @@ def tot_sum():
             number 에 a의 id를 넣어
 
             # 배열 체크
-            my_list2 의 길이만큼 반복문 돌면서 (i) _인접한 이웃이 있는 feature 수 만큼 도는것
-                #id를 number2 에 넣어 _배열
+            my_list2 의 길이만큼 반복문 돌면서 (i) _인접한 이웃이 있는 feature 수 만큼 도는 것
+                # id를 number2 에 넣어 _배열
                 number2에 my_list2의 i행 요소중 1열 요소를 넣어 (id) _my_list2는 2차원 배열임
                 number2 를 int타입으로 변환
                 #table과 배열을 맞춰줘
@@ -240,15 +240,15 @@ def tot_sum():
                     #i의 neighbors 을 체크 _배열
                     my_list2의 i번째 행 요소를 두번째 열부터 돌면서(j)
                         # table 체크
-                            모든 피쳐를 돌면서 (b)
-                                # 배열에서의 id가 테이블의 id와 같다면 그 피쳐를 대상으로 tot,land 가져오고 수정
-                                id에 my_list2의 i행 j열 원소를 넣어
-                                만약 id가 b의 id_field 와 같다면
-                                    tot에 b의 tot를 넣어
-                                    sum = sum+tot
+                        모든 피쳐를 돌면서 (b)
+                            # 배열에서의 id가 테이블의 id와 같다면 그 피쳐를 대상으로 tot,land 가져오고 수정
+                            id에 my_list2의 i행 j열 원소를 넣어
+                            만약 id가 b의 id_field 와 같다면
+                                tot에 b의 tot를 넣어
+                                sum = sum+tot
 
-                                    b의 land_field에 land 넣어
-                                    b의 피쳐 업데이트
+                                b의 land_field에 land 넣어
+                                b의 피쳐 업데이트
 
             land에 1 더해
             만약 sum이 50000보다 크거나 같다면
@@ -324,7 +324,7 @@ integration_neighbors()
 tot_sum()
 
 
-##<< is_clluster field 생성 및 초기화 >>
+##<< is_cluster field 생성 및 초기화 >>
 create_new_field and initialization(is_cluster, 0)
 
 
