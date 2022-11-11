@@ -1,13 +1,13 @@
 ##<< 한 격자가 여러 행정동을 포함하는 경우, 가장 넓은 면적과 가장 좁은 면적 차지하는 행정동 구하기 >>
 
-_ID_FIELD = "id"
+_INTER_ID_FIELD = "inter_id"
 _AREA_FIELD = "area"
 _RANK_FIELD = "rank"
 
 
-_WHERE_GRID_ID_FIELD = 21
-_WHERE_ID_FIELD = 22
-_WHERE_AREA_FIELD = 23
+_WHERE_GRID_ID_FIELD = 32
+_WHERE_INTER_ID_FIELD = 33
+_WHERE_AREA_FIELD = 34
 
 
 def create_new_field(name,type):
@@ -38,11 +38,11 @@ def give_id():
     # Create a dictionary of all features
     feature_dict = {f.id(): f for f in layer.getFeatures()}
 
-    id = 0
+    inter_id = 0
     # Loop through all features and give id
     for f in feature_dict.values():
-        f[_ID_FIELD] = id
-        id += 1
+        f[_INTER_ID_FIELD] = inter_id
+        inter_id += 1
         layer.updateFeature(f)
 
     layer.commitChanges()
@@ -55,6 +55,7 @@ def find_area():
     for a in feature_dict.values():
         a[_AREA_FIELD] = a.geometry().area()
         layer.updateFeature(a)
+    layer.commitChanges()
     print('Processing complete. _find area')
 
 
@@ -72,18 +73,18 @@ def give_rank():
 
         neighbors=[]
         area=[]
-        id=a.attributes()[_WHERE_ID_FIELD]
+        id=a.attributes()[_WHERE_INTER_ID_FIELD]
         neighbors.append(id)
 
-        ###print("id is %s" %a[_ID_FIELD])
+        ###print("id is %s" %a[_INTER_ID_FIELD])
 
         # 모든 개체를 돌면서 a와 비교해
         # a의 grid_id가 b의 grid_id와 같다면 neighbors list에 b의 grid_id추가, area list에 b의 area 추가
         for b in feature_dict.values():
             if (a.attributes()[_WHERE_GRID_ID_FIELD]==b.attributes()[_WHERE_GRID_ID_FIELD]):
                 ###print("a의 grid_id : %s , b의 grid_id : %s" %(a[_WHERE_GRID_ID_FIELD], b[_WHERE_GRID_ID_FIELD]))
-                ###print("b의 id : %s" %b[_WHERE_ID_FIELD])
-                neighbors.append(b.attributes()[_WHERE_ID_FIELD])
+                ###print("b의 id : %s" %b[_WHERE_INTER_ID_FIELD])
+                neighbors.append(b.attributes()[_WHERE_INTER_ID_FIELD])
                 area.append(b.attributes()[_WHERE_AREA_FIELD])
                 ###print("neighbors : %s" %neighbors)
                 ###print("area : %s" % area)
@@ -100,9 +101,9 @@ def give_rank():
 
             # 모든 개체를 돌면서 max_id를 찾으면 rank 필드에 1, min_id 찾으면 rank 필드에 2 넣어
             for c in feature_dict.values():
-                if(max_id==c.attributes()[_WHERE_ID_FIELD]):
+                if(max_id==c.attributes()[_WHERE_INTER_ID_FIELD]):
                     c[_RANK_FIELD] = 1
-                if (min_id == c.attributes()[_WHERE_ID_FIELD]):
+                if (min_id == c.attributes()[_WHERE_INTER_ID_FIELD]):
                     c[_RANK_FIELD] = 2
                 layer.updateFeature(c)
         #만약 한 격자속에 행정동이 하나라면 그 격자의 id를 id에 넣어
@@ -110,10 +111,10 @@ def give_rank():
             id = neighbors[0]
             # 모든 개체를 돌면서 id를 찾으면 rank 필드에 1 넣어
             for c in feature_dict.values():
-                if (id == c.attributes()[_WHERE_ID_FIELD]):
+                if (id == c.attributes()[_WHERE_INTER_ID_FIELD]):
                     c[_RANK_FIELD] = 1
                 layer.updateFeature(c)
-
+    ##layer.commitChanges()
     print('Processing complete. _give rank')
 
 # 시각화 위한 색변경
@@ -171,16 +172,17 @@ def coloring():
     print('Processing complete. _coloring')
 
 
-
 #######################################################start
 layer=iface.activeLayer()
-
-##create_new_field("id",QVariant.Int)
-##create_new_field("area",QVariant.Int)
-##create_new_field_and_initialization("rank",QVariant.Int,0)
+'''
+create_new_field("inter_id",QVariant.Int)
+create_new_field("area",QVariant.Double)
+create_new_field_and_initialization("rank",QVariant.Int,0)
 
 give_id()
+
 find_area()
+'''
 give_rank()
 
 ##coloring()
