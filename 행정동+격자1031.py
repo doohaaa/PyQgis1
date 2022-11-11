@@ -39,7 +39,7 @@ def give_id():
     feature_dict = {f.id(): f for f in layer.getFeatures()}
 
     id = 0
-    # Loop through all features and find features that touch each feature
+    # Loop through all features and give id
     for f in feature_dict.values():
         f[_ID_FIELD] = id
         id += 1
