@@ -24,8 +24,6 @@ _MINI_FIELD = 'mini'
 
 _WHERE_EMD_ID_FIELD = 3
 
-name = 'grid_id'
-type = QVariant.Int
 
 ## Add new FIELD
 def create_new_field(name,type):
@@ -109,7 +107,7 @@ def find_mini():
 
 layer = iface.activeLayer()
 
-create_new_field(name,type)
+create_new_field('grid_id', QVariant.Int)
 give_id()
 
 ## 구분을 위한 새 필드 생성 후 초기화
@@ -127,3 +125,13 @@ find_mini()
 ## 행정동이 격자하나보다 작고 UrbanCenter에 포함이 되는지 확인 _ 조건에 해당하는 피쳐 선택해서 보여줌
 layer.selectByExpression('"is_cluster"=1 and "mini"=1',QgsVectorLayer.SetSelection)
 
+
+
+''''
+##################################################
+# 필드 의미
+mini = 1 : 한 격자속에 완전히 포함되는 행정동
+       0 : 한 격자속애 완젆 포함되지 않는 행정동
+area = 그 개체의 면적
+
+'''
