@@ -131,7 +131,7 @@ layer.selectByExpression('"is_cluster"=1 and "mini"=1',QgsVectorLayer.SetSelecti
 ##################################################
 # 필드 의미
 mini = 1 : 한 격자속에 완전히 포함되는 행정동
-       0 : 한 격자속애 완젆 포함되지 않는 행정동
+       0 : 한 격자속애 완 포함되지 않는 행정동
 area = 그 개체의 면적
 
 '''
