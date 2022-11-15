@@ -8,7 +8,7 @@
 
 
 << alg >>
-
+'emd.shp' 파일에 emd_id 추가하고
 '인구격자읍면동_20_부산.shp' 파일에 grid_id 추가하고
 'emd_20_부산_유효한산출물.shp' 와 '인구격자읍면동_20_부산.shp'을 교차시켜 교차영역 생성
 'intersection.shp' count 리스트 생성 후
@@ -16,12 +16,17 @@
 count 리스트 속 값이 1이 것의 mini 만 1로 표시해줌
 
 '''
+## 'emd_20_전국' emd_id 추가
+##<< Add id >>
+##<< id 추가하기 >>
+_EMD_ID_FIELD = 'emd_id'
 
-## '인구격자읍면동_20_부산' grid_id 추가
+
+## '인구격자읍면동_20_전국' grid_id 추가
 ##<< Add id >>
 ##<< id 추가하기 >>
 
-_ID_FIELD = 'grid_id'
+_GRID_ID_FIELD = 'grid_id'
 _MINI_FIELD = 'mini'
 
 _WHERE_EMD_ID_FIELD = 3
@@ -38,7 +43,7 @@ def create_new_field(name,type):
 
 
 ## give id
-def give_id():
+def give_id(name):
     layer= iface.activeLayer()
     layer.startEditing()
 
@@ -48,7 +53,7 @@ def give_id():
     id =0
     # Loop through all features and give id
     for f in feature_dict.values():
-        f[_ID_FIELD] = id
+        f[name] = id
         id +=1
         layer.updateFeature(f)
 
@@ -109,8 +114,22 @@ def find_mini():
 
 layer = iface.activeLayer()
 
-create_new_field('grid_id', QVariant.Int)
-give_id()
+create_new_field('emd_id', QVariant.Int)
+give_id('emd_id')
+'''
+
+# create_new_field('grid_id', QVariant.Int)
+give_id('grid_id')
+
+
+
+
+## 각 레이어의 유효성 검사
+# 클릭으로 했음
+
+
+## 교차
+# 클릭으로 했음
 
 ## 구분을 위한 새 필드 생성 후 초기화
 create_new_field_and_initialization("mini", QVariant.Int, 0)
@@ -127,7 +146,7 @@ find_mini()
 ## 행정동이 격자하나보다 작고 UrbanCenter에 포함이 되는지 확인 _ 조건에 해당하는 피쳐 선택해서 보여줌
 layer.selectByExpression('"is_cluster"=1 and "mini"=1',QgsVectorLayer.SetSelection)
 
-
+'''
 
 ''''
 ##################################################
