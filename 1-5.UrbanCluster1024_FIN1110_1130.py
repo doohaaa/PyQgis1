@@ -7,8 +7,8 @@ from PyQt5.QtCore import QVariant
 import time
 
 # Names of the fields
-_TOT_FIELD = 'TOT'
 _ID_FIELD = 'id'
+_UC_FIELD = 'uc'
 _NEIGHBORS_FIELD = 'neighbors_'
 _FLAG_FIELD = 'flag'
 _TOT_SUM_FIELD = 'TOT_SUM'
@@ -17,15 +17,15 @@ _IS_CLUSTER_FIELD = 'is_cluster'
 
 # location of field
 _WHERE_TOT_FIELD = 5
-_WHERE_GAP_FIELD = 14
-_WHERE_NEIGHBORS_FIELD = 15
-_WHERE_ID_FIELD = 16
-_WHERE_FLAG_FIELD = 17
-_WHERE_TOT_SUM_FIELD = 18
-_WHERE_LAND_FIELD = 19
-_WHERE_IS_CLUSTER_FIELD = 20
+_WHERE_NEIGHBORS_FIELD = 17
+_WHERE_ID_FIELD = 18
+_WHERE_FLAG_FIELD = 19
+_WHERE_TOT_SUM_FIELD = 20
+_WHERE_LAND_FIELD = 21
+_WHERE_IS_CLUSTER_FIELD = 22
+_WHERE_UC_FIELD = 23
 
-my_list30 = []
+my_list3 = []
 
 ## Create new field and initialization
 def create_new_field_and_initialization(name,type,value):
@@ -43,16 +43,25 @@ def create_new_field_and_initialization(name,type,value):
     layer.dataProvider().changeAttributeValues(attr_map)
     print('Processing complete. _create_new_field_and_initialization')
 
+##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
+def extract_grid():
+    layer.startEditing()
+
+    # Create a dictionary of all features
+    feature_dict = {f.id(): f for f in layer.getFeatures()}
+
+    for f in feature_dict.values():
+        if (f.attributes()[_WHERE_IS_CLUSTER_FIELD] != 1 and f.attributes()[_WHERE_TOT_FIELD] >= 300):
+            f[_UC_FIELD] = 1
+            layer.updateFeature(f)
+
+    layer.commitChanges()
+    print('Processing complete. _Extract grid')
 
 ##<< Find the adjacent grid >>
 def find_adjacent_grid():
     layer = iface.activeLayer()
     layer.startEditing()
-
-    # create new fields
-    layer_provider = layer.dataProvider()
-    layer_provider.addAttributes([QgsField(_NEIGHBORS_FIELD, QVariant.String),
-                                  QgsField(_ID_FIELD, QVariant.Int)])
 
     # Create a dictionary of all features
     feature_dict = {f.id(): f for f in layer.getFeatures()}
@@ -66,7 +75,9 @@ def find_adjacent_grid():
     for f in feature_dict.values():
         geom = f.geometry()
         # TOT above 300 and gap filling cells
-        if (f.attributes()[_WHERE_TOT_FIELD] >= 300 or f.attributes()[_WHERE_GAP_FIELD] != 0):
+        if (f.attributes()[_WHERE_UC_FIELD] != 0 ):
+            #initialize flag field
+            f[_FLAG_FIELD] = 0
             # Find all features that intersect the bounding box of the current feature.
             intersecting_ids = index.intersects(geom.boundingBox())
 
@@ -85,11 +96,10 @@ def find_adjacent_grid():
                 # intersects a feature. We use the 'disjoint' predicate to satisfy
                 # these conditions. So if a feature is not disjoint, it is a neighbor.
                 if (not intersecting_f.geometry().disjoint(geom) ):
-                    # Add to neighbors when all neighbors satisfy tot>=300 or gap==1
+                    # Add to neighbors when all neighbors satisfy uc==1
                     for b in feature_dict.values():
                         if (b.attributes()[_WHERE_ID_FIELD]==intersecting_id):
-                            if (b.attributes()[_WHERE_TOT_FIELD] >= 300 or
-                                    b.attributes()[_WHERE_GAP_FIELD] == 1):
+                            if (b.attributes()[_WHERE_UC_FIELD] != 0):
                                 neighbors.append(intersecting_id)
 
             f[_NEIGHBORS_FIELD] = ','.join(map(str, neighbors))
@@ -114,11 +124,11 @@ def integration_neighbors():
 
     # Make two pointers
     for a in feature_dict.values():
-        # TOT above 300 or gap filling cells
-        if (a.attributes()[_WHERE_ID_FIELD]  != NULL):
+        # TOT above 300 and not included UrbanCenter
+        if (a.attributes()[_WHERE_NEIGHBORS_FIELD]  != 0 and a.attributes()[_WHERE_ID_FIELD] !=NULL):
             for b in feature_dict.values():
-                # TOT above 300 or gap filling cells
-                if (a.attributes()[_WHERE_ID_FIELD]  != NULL):
+                # TOT above 300 and not included UrbanCenter
+                if (b.attributes()[_WHERE_NEIGHBORS_FIELD]  != 0 and b.attributes()[_WHERE_ID_FIELD] !=NULL):
                     # Initalize neighbors list
                     neighbors = []
 
@@ -148,7 +158,7 @@ def integration_neighbors():
                                         if v not in new_list:
                                             new_list.append(v)
 
-                                    my_list30.append(new_list)
+                                    my_list3.append(new_list)
 
                                     a[_FLAG_FIELD] = 1
 
@@ -162,27 +172,12 @@ def integration_neighbors():
 ##<< Calculate the sum of the tot in the cluster >>
 def tot_sum():
     layer = iface.activeLayer()
-
-    # Create new field and initialization
-    layer_provider = layer.dataProvider()
-    layer_provider.addAttributes([QgsField('TOT_SUM', QVariant.Int), QgsField('land', QVariant.Int)])
-    layer.updateFields()
     layer.startEditing()
-
-    # Names of the new fields to be added to the layer
-    _TOT_SUM_FIELD = 'TOT_SUM'
-    _LAND_FIELD = 'land'
 
     # Create a dictionary of all features
     feature_dict = {f.id(): f for f in layer.getFeatures()}
 
-    land = 100
-
-    # 결측치 제거 _TOT_FIELD
-    for a in feature_dict.values():
-        if (a.attributes()[_WHERE_TOT_FIELD] == NULL):
-            a[_TOT_FIELD] = 0
-            layer.updateFeature(a)
+    land = 10
 
     # Make one pointer _table
     for a in feature_dict.values():
@@ -190,38 +185,47 @@ def tot_sum():
         my_list_a = str(a.attributes()[_WHERE_NEIGHBORS_FIELD])
         my_list_a = my_list_a.split(',')
 
-        # flag==0 and have neighors_ / give an id_field to variable
-        if (a.attributes()[_WHERE_FLAG_FIELD] == 0 and len(my_list_a) > 1):
-            number = a.attributes()[_WHERE_ID_FIELD]
+        # Among the TOT>=300 and not Urban Center
+        if (a.attributes()[_WHERE_UC_FIELD] == 1):
+            # if a will not be integrated
+            if (a.attributes()[_WHERE_FLAG_FIELD] == 0):
+                number = a.attributes()[_WHERE_ID_FIELD]
 
-            # check array
-            for i in range(len(my_list30)):
-                # put id in number2 _array
-                number2 = my_list30[i][0]
-                number2 = int(number2)
-                # match table's id (a) and array's id
-                if (number2 == number):
-                    # check i's neighbors _array
-                    for j in range(1, len(my_list30[i])):
-                        # check table
-                        for b in feature_dict.values():
-                            # Get the id from the array and the TOT of the id from the table
-                            id = int(my_list30[i][j])
-                            if (id == b.attributes()[_WHERE_ID_FIELD]):
-                                TOT = b.attributes()[_WHERE_TOT_FIELD]
-                                sum += TOT
+                # if a doesn't have neighbors
+                if (len(my_list_a) == 1):
+                    sum=a.attributes()[_WHERE_TOT_FIELD]
+                    a[_LAND_FIELD] = land
+                    layer.updateFeature(a)
 
-                                b[_LAND_FIELD] = land
-                                layer.updateFeature(b)
+                # if a has neighbors _check array
+                for i in range(len(my_list3)):
+                    # put id in number2 _array
+                    number2 = my_list3[i][0]
+                    number2 = int(number2)
+                    # match table's id (a) and array's id
+                    if (number2 == number):
+                        if(len(my_list_a)>1):
+                            # check i's neighbors _array
+                            for j in range(1, len(my_list3[i])):
+                                # check table
+                                for b in feature_dict.values():
+                                    # Get the id from the array and the TOT of the id from the table
+                                    id = int(my_list3[i][j])
+                                    if (id == b.attributes()[_WHERE_ID_FIELD]):
+                                        TOT = b.attributes()[_WHERE_TOT_FIELD]
+                                        sum += TOT
 
-            land += 1
-            if (sum >= 5000):
-                a[_TOT_SUM_FIELD] = sum
-                layer.updateFeature(a)
+                                        b[_LAND_FIELD] = land
+                                        layer.updateFeature(b)
+
+                land += 1
+
+                if (sum >= 5000):
+                    a[_TOT_SUM_FIELD] = sum
+                    layer.updateFeature(a)
 
     layer.commitChanges()
     print('Processing complete. _tot_sum')
-
 
 ##<< Find cluster with more than 5000 tot_sum >>
 def find_5000above_clusters():
@@ -236,7 +240,7 @@ def find_5000above_clusters():
     for a in feature_dict.values():
         my_list_a = str(a.attributes()[_WHERE_NEIGHBORS_FIELD])
         my_list_a = my_list_a.split(',')
-        if (a.attributes()[_WHERE_TOT_SUM_FIELD] >= 5000 ):
+        if (a.attributes()[_WHERE_TOT_SUM_FIELD] >= 5000 and a.attributes()[_WHERE_TOT_SUM_FIELD] < 50000 ):
             land_list.append(a.attributes()[_WHERE_LAND_FIELD])
 
     for a in feature_dict.values():
@@ -244,7 +248,7 @@ def find_5000above_clusters():
         my_list_a = my_list_a.split(',')
         for b in range(len(land_list)):
             if (land_list[b] == a.attributes()[_WHERE_LAND_FIELD]):
-                a[_IS_CLUSTER_FIELD] = 20
+                a[_IS_CLUSTER_FIELD] = 2
                 layer.updateFeature(a)
 
     layer.commitChanges()
@@ -265,48 +269,77 @@ def fill_value(name,value):
     layer.dataProvider().changeAttributeValues(attr_map)
     print('Processing complete. _create_new_field_and_initialization')
 
+## Print TOT_SUM
+def print_TOT_SUM(fn):
+    layer=QgsVectorLayer(fn, '', 'ogr')
 
+    # Create a dictionary of all features
+    feature_dict = {f.id(): f for f in layer.getFeatures()}
+
+    # Make pointers
+    for a in feature_dict.values():
+        # TOT_SUM is not null then print TOT_SUM and land
+        if (a.attributes()[_WHERE_TOT_SUM_FIELD]  != NULL):
+            print("%s의 TOT_SUM은 %d" %(a.attributes()[_WHERE_LAND_FIELD],a.attributes()[_WHERE_TOT_SUM_FIELD]))
+
+    print('Processing complete.')
+
+## Visualization
+def setLabel():
+    layer_settings  = QgsPalLayerSettings()
+    text_format = QgsTextFormat()
+
+    text_format.setFont(QFont("Arial", 12))
+    text_format.setSize(6)
+
+    layer_settings.setFormat(text_format)
+
+    layer_settings.fieldName = "land"
+    layer_settings.placement = 2
+
+    layer_settings.enabled = True
+
+    layer_settings = QgsVectorLayerSimpleLabeling(layer_settings)
+    my_layer=iface.activeLayer()
+    #my_layer=QgsVectorLayer('C:/Users/User/Desktop/지역분류체계/urban_emd_20/인구격자읍면동_20_부산/1020test_UrbanCluster/original_copy','','ogr')
+    my_layer.setLabelsEnabled(True)
+    my_layer.setLabeling(layer_settings)
+    my_layer.triggerRepaint()
 
 
 ########## start
-'''
 ##<< import layer >>
-fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/인구격자읍면동00_부울경.shp'
-layer = iface.addVectorLayer(fn, '', 'ogr')
+###fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/1024test_전국/original_copy'  ##already have all attributes
+###layer = iface.addVectorLayer(fn, '', 'ogr')
 
-##<< Save layer as UCenter >
-path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/인구격자읍면동00_UCluster에준하는셀.shp'
-_writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
-
-##<< import UCenter layer >>
-layer = iface.addVectorLayer(path, '', 'ogr')
+layer = iface.activeLayer()
 '''
-layer= iface.activeLayer()
+##<< Create UC field and initialization to 0 >>
+create_new_field_and_initialization("uc",QVariant.Int,0)
+
+
+##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
+extract_grid()
+'''
 
 ##<< Find the adjacent grid>>
 find_adjacent_grid()
 
 
-##<< Create new field and initialization >>
-create_new_field_and_initialization("flag",QVariant.Int,0)
-
 ##<< Integrate neighbors >>
 integration_neighbors()
 
+
 ##<< Get TOT_SUM >>
 tot_sum()
-
-
-##<< Add is_cluster field >>
-create_new_field_and_initialization("is_cluster",QVariant.Int,0)
 
 
 ##<< Find cluster with more than 5000 tot_sum >>
 find_5000above_clusters()
 
 
-##<< Select by expression _"is_cluster=20" >>
-select_by_Expression('"is_cluster"=20')
+##<< Select by expression _"is_cluster=2" >>
+select_by_Expression('"is_cluster"=2')
 
 
 ##<< Neighbors initialization >> Need to initialize because field length is not saved as exceeded
@@ -315,7 +348,7 @@ fill_value(_NEIGHBORS_FIELD,0)
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
-                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/is_cluster_20.shp',
+                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/is_cluster_2.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
 
 
@@ -324,8 +357,8 @@ layer = iface.activeLayer()
 
 import processing
 
-infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/is_cluster_20.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/urbancluster에준하는셀_dissolve1129.shp"
+infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/is_cluster_2.shp"
+outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/urbancluster_dissolve1130.shp"
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
@@ -333,6 +366,8 @@ processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 
 ##<< get dissolved file >>
 layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
-print('Processing complete._UrbanCluster에 준하는 셀')
+print('Processing complete._UrbanCluster')
 
+##<< Show TOT_SUM of UrbanCenter and UrbanCluster >>
+print_TOT_SUM('C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/original_copy')
 

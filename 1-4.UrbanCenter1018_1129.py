@@ -359,7 +359,7 @@ layer = iface.activeLayer()
 import processing
 
 infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/is_cluster_1.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/urbancenter_dissolve1024.shp"
+outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/urbancenter_dissolve1129.shp"
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
