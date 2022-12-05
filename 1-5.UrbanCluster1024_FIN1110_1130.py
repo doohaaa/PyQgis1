@@ -177,7 +177,7 @@ def tot_sum():
     # Create a dictionary of all features
     feature_dict = {f.id(): f for f in layer.getFeatures()}
 
-    land = 10
+    land = 100000
 
     # Make one pointer _table
     for a in feature_dict.values():
