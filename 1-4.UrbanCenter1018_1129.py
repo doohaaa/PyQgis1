@@ -93,7 +93,8 @@ def find_adjacent_grid():
                 # add id in _ID_FIELD
                 if (f == intersecting_f):
                     f[_ID_FIELD] = intersecting_id
-
+                    layer.updateFeature(f)
+                    
                 # For our purpose we consider a feature as 'neighbor' if it touches or
                 # intersects a feature. We use the 'disjoint' predicate to satisfy
                 # these conditions. So if a feature is not disjoint, it is a neighbor.
