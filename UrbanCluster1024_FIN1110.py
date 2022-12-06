@@ -125,10 +125,10 @@ def integration_neighbors():
     # Make two pointers
     for a in feature_dict.values():
         # TOT above 300 and not included UrbanCenter
-        if (a.attributes()[_WHERE_NEIGHBORS_FIELD]  != 0 and a.attributes()[_WHERE_ID_FIELD] !=NULL):
+        if (a.attributes()[_WHERE_UC_FIELD] != 0 ):
             for b in feature_dict.values():
                 # TOT above 300 and not included UrbanCenter
-                if (b.attributes()[_WHERE_NEIGHBORS_FIELD]  != 0 and b.attributes()[_WHERE_ID_FIELD] !=NULL):
+                if (b.attributes()[_WHERE_UC_FIELD] != 0 ):
                     # Initalize neighbors list
                     neighbors = []
 
@@ -177,7 +177,7 @@ def tot_sum():
     # Create a dictionary of all features
     feature_dict = {f.id(): f for f in layer.getFeatures()}
 
-    land = 10
+    land = 100000
 
     # Make one pointer _table
     for a in feature_dict.values():
