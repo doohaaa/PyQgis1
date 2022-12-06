@@ -1,5 +1,25 @@
 from PyQt5 import QtGui
 
+layer.removeSelection()
+
+## TOT이 NULL 인것을 0으로 바꿔줘
+_WHERE_TOT_FIELD = 2
+_TOT_FIELD = 'TOT'
+
+# Create a dictionary of all features
+feature_dict = {f.id(): f for f in layer.getFeatures()}
+
+layer.startEditing()
+
+for f in feature_dict.values():
+    if (f.attributes()[_WHERE_TOT_FIELD] == NULL):
+        f[_TOT_FIELD] = 0
+        layer.updateFeature(f)
+
+layer.commitChanges()
+print('Processing complete._ TOT 데이터 전처리')
+
+## 시각화 
 myVectorLayer = iface.activeLayer()
 myTargetField = 'TOT'
 myRangeList = []
