@@ -1,6 +1,6 @@
-## add function and delete min_id _FIN
+## << emd_20_Busan Making Cluster _Urban Cluster에 준하는 셀 >> ##
 
-## << emd_20_Busan Making Cluster _Urban Cluster >> ##
+### gap_filling 까지 완료한 인구격자 파일로 작업
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
