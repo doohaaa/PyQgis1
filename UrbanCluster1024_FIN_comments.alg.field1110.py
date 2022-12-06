@@ -125,10 +125,10 @@ def integration_neighbors()
     #두개의 포인터 생성
     모든 피쳐를 돌면서 (a) _table
         # TOT>=300 이고 UrbanCenter에 포함되지 않은 셀들에 대해
-        a가 이웃이 있고, id_field 가 null이 아니라면, (id_field가 있다는 의미는 uc_field 가 1이라는 의미)
+        a의 uc_field 가 1이면,
             모든 피쳐를 돌면서 (b) _table
                 # TOT>=300 이고 UrbanCenter에 포함되지 않은 셀들에 대해
-                b가 이웃이 있고, id_field가 null이 아니라면, (id_field가 있다는 의미는 uc_field 가 1이라는 의미)
+                의 uc_field 가 1이면,
                     # neighbors 리스트 생성
                     neighbors 리스트 생성
 
