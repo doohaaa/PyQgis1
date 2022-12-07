@@ -21,15 +21,15 @@ _WHERE_NAME_FIELD = 0
 _WHERE_TOT_FIELD = 5
 
 # location of field _ add later
-_WHERE_GAP_FIELD = 14
-_WHERE_GRID_N_1 = 15
-_WHERE_GRID_N_2 = 16
-_WHERE_NEIGHBORS_FIELD = 17
-_WHERE_ID_FIELD = 18
-_WHERE_FLAG_FIELD = 19
-_WHERE_TOT_SUM_FIELD = 20
-_WHERE_LAND_FIELD = 21
-_WHERE_IS_CLUSTER_FIELD = 22
+_WHERE_GAP_FIELD = 18
+_WHERE_GRID_N_1 = 19
+_WHERE_GRID_N_2 = 20
+_WHERE_NEIGHBORS_FIELD = 21
+_WHERE_ID_FIELD = 22
+_WHERE_FLAG_FIELD = 23
+_WHERE_TOT_SUM_FIELD = 24
+_WHERE_LAND_FIELD = 25
+_WHERE_IS_CLUSTER_FIELD = 26
 
 my_list2 = []
 
@@ -93,8 +93,7 @@ def find_adjacent_grid():
                 # add id in _ID_FIELD
                 if (f == intersecting_f):
                     f[_ID_FIELD] = intersecting_id
-                    layer.updateFeature(f)
-                    
+
                 # For our purpose we consider a feature as 'neighbor' if it touches or
                 # intersects a feature. We use the 'disjoint' predicate to satisfy
                 # these conditions. So if a feature is not disjoint, it is a neighbor.
@@ -299,11 +298,11 @@ def fill_value(name,value):
 
 #############################################################################################start
 ##<< import layer >>
-fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/인구격자읍면동00_부울경.shp'
+fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/인구격자읍면동_20_부울경.shp'
 layer = iface.addVectorLayer(fn, '', 'ogr')
 
 ##<< Save layer as UCenter >
-path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/인구격자읍면동00_부울경_UCenter.shp'
+path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/인구격자읍면동20_부울경_UCenter.shp'
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
 ##<< import UCenter layer >>
@@ -350,7 +349,7 @@ fill_value(_NEIGHBORS_FIELD,0)
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
-                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/is_cluster_1.shp',
+                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/20_is_cluster_1.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
 
 
@@ -359,8 +358,8 @@ layer = iface.activeLayer()
 
 import processing
 
-infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/is_cluster_1.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1129test/urbancenter_dissolve1129.shp"
+infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/20_is_cluster_1.shp"
+outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/20_urbancenter_dissolve.shp"
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 

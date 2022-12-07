@@ -17,13 +17,13 @@ _IS_CLUSTER_FIELD = 'is_cluster'
 
 # location of field
 _WHERE_TOT_FIELD = 5
-_WHERE_NEIGHBORS_FIELD = 17
-_WHERE_ID_FIELD = 18
-_WHERE_FLAG_FIELD = 19
-_WHERE_TOT_SUM_FIELD = 20
-_WHERE_LAND_FIELD = 21
-_WHERE_IS_CLUSTER_FIELD = 22
-_WHERE_UC_FIELD = 23
+_WHERE_NEIGHBORS_FIELD = 21
+_WHERE_ID_FIELD = 22
+_WHERE_FLAG_FIELD = 23
+_WHERE_TOT_SUM_FIELD = 24
+_WHERE_LAND_FIELD = 25
+_WHERE_IS_CLUSTER_FIELD = 26
+_WHERE_UC_FIELD = 27
 
 my_list3 = []
 
@@ -125,10 +125,10 @@ def integration_neighbors():
     # Make two pointers
     for a in feature_dict.values():
         # TOT above 300 and not included UrbanCenter
-        if (a.attributes()[_WHERE_NEIGHBORS_FIELD]  != 0 and a.attributes()[_WHERE_ID_FIELD] !=NULL):
+        if (a.attributes()[_WHERE_UC_FIELD] != 0):
             for b in feature_dict.values():
                 # TOT above 300 and not included UrbanCenter
-                if (b.attributes()[_WHERE_NEIGHBORS_FIELD]  != 0 and b.attributes()[_WHERE_ID_FIELD] !=NULL):
+                if (b.attributes()[_WHERE_UC_FIELD] != 0):
                     # Initalize neighbors list
                     neighbors = []
 
@@ -309,18 +309,25 @@ def setLabel():
 
 ########## start
 ##<< import layer >>
-###fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/1024test_전국/original_copy'  ##already have all attributes
-###layer = iface.addVectorLayer(fn, '', 'ogr')
+fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/인구격자읍면동20_부울경_UCenter.shp'
+layer = iface.addVectorLayer(fn, '', 'ogr')
 
+##<< Save layer as UCluster >
+path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/인구격자읍면동20_부울경_UCluster.shp'
+_writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
+
+##<< import UCluster layer >>
+layer = iface.addVectorLayer(path, '', 'ogr')
 layer = iface.activeLayer()
-'''
+
+
 ##<< Create UC field and initialization to 0 >>
 create_new_field_and_initialization("uc",QVariant.Int,0)
 
 
 ##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
 extract_grid()
-'''
+
 
 ##<< Find the adjacent grid>>
 find_adjacent_grid()
@@ -345,10 +352,14 @@ select_by_Expression('"is_cluster"=2')
 ##<< Neighbors initialization >> Need to initialize because field length is not saved as exceeded
 fill_value(_NEIGHBORS_FIELD,0)
 
+##<< Save layer as ClusterType >
+path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/인구격자읍면동20_부울경_ClusterType.shp'
+_writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
+
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
-                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/is_cluster_2.shp',
+                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/20_is_cluster_2.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
 
 
@@ -357,8 +368,8 @@ layer = iface.activeLayer()
 
 import processing
 
-infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/is_cluster_2.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/urbancluster_dissolve1130.shp"
+infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/20_is_cluster_2.shp"
+outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/20_urbancluster_dissolve.shp"
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
@@ -369,5 +380,5 @@ layer3 = iface.addVectorLayer(outfn2, '','ogr')
 print('Processing complete._UrbanCluster')
 
 ##<< Show TOT_SUM of UrbanCenter and UrbanCluster >>
-print_TOT_SUM('C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/original_copy')
+print_TOT_SUM('C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1207test/인구격자읍면동20_부울경_UCluster.shp')
 

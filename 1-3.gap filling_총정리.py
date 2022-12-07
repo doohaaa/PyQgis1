@@ -8,7 +8,7 @@ layer = iface.activeLayer()
 
 _GAP_FIELD = 'gap'
 _WHERE_TOT=5
-_WHERE_GAP=14
+_WHERE_GAP=18
 
 
 layer= iface.activeLayer()
@@ -73,6 +73,6 @@ while(stop<15):
             layer.updateFeature(f)
     stop +=1
     ##print(stop)
-###layer.commitChanges()
+layer.commitChanges()
 print('Processing complete.')
 
