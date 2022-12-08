@@ -1,4 +1,4 @@
 # PyQgis
 
-If you want to use Qgis with Python?
+Do you want to use Qgis with Python?
 Welcome!
