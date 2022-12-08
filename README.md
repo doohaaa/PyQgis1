@@ -1,1 +1,1 @@
-# PyQgis
+# learning PyQgis
