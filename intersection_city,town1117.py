@@ -41,6 +41,11 @@ _RANK_FIELD = 'rank'
 emd_id = 204
 
 
+def create_new_field(name,type):
+    ##<<  Create new field and initialization  >>
+    layer_provider = layer.dataProvider()
+    layer_provider.addAttributes([QgsField(name, type)])
+    layer.updateFields()
 
 def create_new_field_and_initialization(name,type,value):
     ##<<  Create new field and initialization  >>
