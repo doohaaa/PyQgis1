@@ -1,7 +1,3 @@
-##use another file!
-
-## add function and delete min_id _FIN
-
 ## << emd_20_Busan Making Cluster _Urban Cluster >> ##
 
 from qgis.utils import iface
@@ -19,14 +15,14 @@ _IS_CLUSTER_FIELD = 'is_cluster'
 
 # location of field
 _WHERE_GRID_1K_CD_FIELD = 0
-_WHERE_TOT_FIELD = 5
-_WHERE_NEIGHBORS_FIELD = 20
-_WHERE_ID_FIELD = 21
-_WHERE_FLAG_FIELD = 22
-_WHERE_TOT_SUM_FIELD = 23
-_WHERE_LAND_FIELD = 24
-_WHERE_IS_CLUSTER_FIELD = 25
-_WHERE_UC_FIELD = 26
+_WHERE_TOT_FIELD = 2
+_WHERE_NEIGHBORS_FIELD = 6
+_WHERE_ID_FIELD = 7
+_WHERE_FLAG_FIELD = 8
+_WHERE_TOT_SUM_FIELD = 9
+_WHERE_LAND_FIELD = 10
+_WHERE_IS_CLUSTER_FIELD = 11
+_WHERE_UC_FIELD = 12
 
 #[[id, UCluster id],..]
 my_list3 = []
@@ -319,8 +315,16 @@ def setLabel():
 ##<< import layer >>
 ###fn = 'C:/Users/User/Desktop/지역분류체계/urban_emd_20/1024test_전국/original_copy'  ##already have all attributes
 ###layer = iface.addVectorLayer(fn, '', 'ogr')
+##<< Save layer as UCenter >
+path = 'D:/지역분류체계22/1206test/인구격자22_UCluster.shp'
+_writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
-layer = iface.activeLayer()
+
+##<< import UCenter layer >>
+layer = iface.addVectorLayer(path, '', 'ogr')
+
+layer= iface.activeLayer()
+
 
 ##<< Create UC field and initialization to 0 >>
 create_new_field_and_initialization("uc",QVariant.Int,0)
@@ -328,55 +332,41 @@ create_new_field_and_initialization("uc",QVariant.Int,0)
 
 ##<< Extract grid _ TOT>=300 and is_cluster != 1 >>
 extract_grid()
-'''
 
 ##<< Find the adjacent grid>>
 find_adjacent_grid()
 
-
 ##<< Integrate neighbors >>
 integration_neighbors()
-
 
 ##<< Get TOT_SUM >>
 tot_sum()
 
-
 ##<< Find cluster with more than 5000 tot_sum >>
 find_5000above_clusters()
-
 
 ##<< Select by expression _"is_cluster=2" >>
 select_by_Expression('"is_cluster"=2')
 
-
 ##<< Neighbors initialization >> Need to initialize because field length is not saved as exceeded
 fill_value(_NEIGHBORS_FIELD,0)
 
-
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
-                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/is_cluster_2.shp',
+                                                  'D:/지역분류체계22/1206test/is_cluster_2.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
-
-
+                                                  
 ##<< dissolve >>  - for Visualization
 layer = iface.activeLayer()
-
 import processing
-
-infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/is_cluster_2.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/urbancluster_dissolve1130.shp"
-
+infn = "D:/지역분류체계22/1206test/is_cluster_2.shp"
+outfn2 = "D:/지역분류체계22/1206test/urbancluster_dissolve.shp"
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
-
+layer.removeSelection()
 
 ##<< get dissolved file >>
 layer3 = iface.addVectorLayer(outfn2, '','ogr')
-
 print('Processing complete._UrbanCluster')
 
 ##<< Show TOT_SUM of UrbanCenter and UrbanCluster >>
-print_TOT_SUM('C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1130test/original_copy')
-
-'''
+##print_TOT_SUM('D:/grid22/original_copy')

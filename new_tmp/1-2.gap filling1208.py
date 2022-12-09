@@ -1,16 +1,29 @@
-#gap filling  1129
+## gap_filling 1208 FIN
 
+'''
+
+layer = 인구격자읍면동
+레이어 클릭 후 실행
+
+
+++
+수정해줘야 할 부분 : 변수에서 field 위치와 이름
+
+'''
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
 
 layer = iface.activeLayer()
 
-_GAP_FIELD = 'gap'
+# location of field
 _WHERE_TOT=5
 _WHERE_GAP=18
 
+# Names of the fields
+_GAP_FIELD = 'gap'
 
+# 레이어 지정
 layer= iface.activeLayer()
 
 
@@ -47,7 +60,6 @@ stop = 0
 while(stop<15):
     # Loop through all features and find features that touch each feature
     for f in feature_dict.values():
-        ##print ('Working on %s' % f[_NAME_FIELD])
         geom = f.geometry()
         # Find all features that intersect the bounding box of the current feature.
         intersecting_ids = index.intersects(geom.boundingBox())
@@ -72,7 +84,7 @@ while(stop<15):
             f[_GAP_FIELD] = 1
             layer.updateFeature(f)
     stop +=1
-    ##print(stop)
+
 layer.commitChanges()
-print('Processing complete.')
+print('Processing complete. _gap_filling')
 

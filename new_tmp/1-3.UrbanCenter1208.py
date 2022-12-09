@@ -1,6 +1,14 @@
-## add function and delete min_id _FIN
+## <<Urban Center >> ##  주석 미완성
 
-## << emd_20_Busan Making Cluster >> ##
+'''
+
+layer = 인구격자읍면동 -> UCenter로 저장해주고 이 레이어에서 작업
+
+
+++
+수정해줘야 할 부분 : 변수에서 field 위치와 이름, 아래쪽 start 이후의 파일 경로
+
+'''
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant

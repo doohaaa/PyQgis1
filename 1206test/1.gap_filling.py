@@ -1,5 +1,7 @@
-#gap filling  1129
-
+## gap filling 
+'''
+오류확인 필요
+'''
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
@@ -7,8 +9,8 @@ from PyQt5.QtCore import QVariant
 layer = iface.activeLayer()
 
 _GAP_FIELD = 'gap'
-_WHERE_TOT=5
-_WHERE_GAP=18
+_WHERE_TOT=2
+_WHERE_GAP=3
 
 
 layer= iface.activeLayer()
@@ -72,7 +74,7 @@ while(stop<15):
             f[_GAP_FIELD] = 1
             layer.updateFeature(f)
     stop +=1
-    ##print(stop)
-layer.commitChanges()
+    layer.commitChanges()
 print('Processing complete.')
 
+layer.selectByExpression('"gap"=1',QgsVectorLayer.SetSelection)
