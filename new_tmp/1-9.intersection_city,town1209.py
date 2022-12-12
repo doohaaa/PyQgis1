@@ -128,7 +128,7 @@ for k in range(len(max_id)):
 '''
 
 
-
+#################################### 미완성
 def new_give_rank():
     layer.startEditing()
 
@@ -145,53 +145,6 @@ def new_give_rank():
         tmp.append(i)
 
 
-
-
-    for a in feature_dict.values():
-
-        neighbors=[]
-        area=[]
-        id=a.attributes()[_WHERE_INTER_ID_FIELD]
-        neighbors.append(id)
-
-        ###print("id is %s" %a[_INTER_ID_FIELD])
-
-        # 모든 개체를 돌면서 a와 비교해
-        # a의 grid_id가 b의 grid_id와 같다면 neighbors list에 b의 grid_id추가, area list에 b의 area 추가
-        for b in feature_dict.values():
-            if (a.attributes()[_WHERE_GRID_ID_FIELD]==b.attributes()[_WHERE_GRID_ID_FIELD]):
-                ###print("a의 grid_id : %s , b의 grid_id : %s" %(a[_WHERE_GRID_ID_FIELD], b[_WHERE_GRID_ID_FIELD]))
-                ###print("b의 id : %s" %b[_WHERE_INTER_ID_FIELD])
-                neighbors.append(b.attributes()[_WHERE_INTER_ID_FIELD])
-                area.append(b.attributes()[_WHERE_AREA_FIELD])
-                ###print("neighbors : %s" %neighbors)
-                ###print("area : %s" % area)
-                ###print("")
-
-
-        #만약 한 격자속에 개체가 두개 이상 있다면 area의 max값의 순서를 i에 넣고, min값의 순서를 j에 넣어
-        # neighbors의 i+1번째 값이 max_id, j+1번째 값이 min_id
-        if (len(area)>1):
-            i = area.index(max(area))
-            j = area.index(min(area))
-            max_id = neighbors[i + 1]
-            min_id = neighbors[j + 1]
-
-            # 모든 개체를 돌면서 max_id를 찾으면 rank 필드에 1, min_id 찾으면 rank 필드에 2 넣어
-            for c in feature_dict.values():
-                if(max_id==c.attributes()[_WHERE_INTER_ID_FIELD]):
-                    c[_RANK_FIELD] = 1
-                if (min_id == c.attributes()[_WHERE_INTER_ID_FIELD]):
-                    c[_RANK_FIELD] = 2
-                layer.updateFeature(c)
-        #만약 한 격자속에 행정동이 하나라면 그 격자의 id를 id에 넣어
-        elif(len(area)==1):
-            id = neighbors[0]
-            # 모든 개체를 돌면서 id를 찾으면 rank 필드에 1 넣어
-            for c in feature_dict.values():
-                if (id == c.attributes()[_WHERE_INTER_ID_FIELD]):
-                    c[_RANK_FIELD] = 1
-                layer.updateFeature(c)
     ##layer.commitChanges()
     print('Processing complete. _give rank')
 
