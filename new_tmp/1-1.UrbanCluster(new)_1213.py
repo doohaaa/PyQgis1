@@ -289,7 +289,7 @@ layer= iface.activeLayer()
 path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1213test_new인구격자사용/인구격자00_부산인근_UCluster102.shp'
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
-##<< import UCenter layer >>
+##<< import UCluster layer >>
 layer = iface.addVectorLayer(path, '', 'ogr')
 
 layer= iface.activeLayer()
