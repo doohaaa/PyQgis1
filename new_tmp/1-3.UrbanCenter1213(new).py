@@ -1,4 +1,4 @@
-## <<Urban Center >> ##  주석 미완성
+## <<Urban Center >> ##   미완성
 
 '''
 layer = 인구격자UCenter
@@ -96,7 +96,8 @@ def find_adjacent_grid():
                 if (not intersecting_f.geometry().disjoint(geom) ):
                     # add intersecting grid only touched sides including itself
                     if (f.attributes()[_WHERE_GRID_N_1] == intersecting_f.attributes()[_WHERE_GRID_N_1] or
-                            f.attributes()[_WHERE_GRID_N_2] == intersecting_f.attributes()[_WHERE_GRID_N_2]):
+                            f.attributes()[
+                                _WHERE_GRID_N_2] == intersecting_f.attributes()[_WHERE_GRID_N_2]):
 
                         # Add to neighbors when all neighbors satisfy tot>=1500 or gap==1
                         for b in feature_dict.values():
