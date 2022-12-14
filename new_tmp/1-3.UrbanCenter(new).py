@@ -1,4 +1,4 @@
-## <<Urban Center >> ##  주석 미완성
+## <<Urban Center >> ##   미완성
 
 '''
 layer = 인구격자UCenter

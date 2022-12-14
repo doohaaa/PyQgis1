@@ -1,7 +1,7 @@
 ## <<Urban Center >> ##  주석 미완성
 
 '''
-layer = 인구격자UCenter
+layer = 인구격자UCluster -> gap filling 한 파일 들고와야
 ++
 수정해줘야 할 부분 : 변수에서 field 위치와 이름, 아래쪽 start 이후의 파일 경로
 '''
@@ -112,8 +112,7 @@ def find_adjacent_grid():
                 if (not intersecting_f.geometry().disjoint(geom) ):
                     # add intersecting grid only touched sides including itself
                     if (f.attributes()[_WHERE_GRID_N_1] == intersecting_f.attributes()[_WHERE_GRID_N_1] or
-                            f.attributes()[
-                                _WHERE_GRID_N_2] == intersecting_f.attributes()[_WHERE_GRID_N_2]):
+                            f.attributes()[_WHERE_GRID_N_2] == intersecting_f.attributes()[_WHERE_GRID_N_2]):
 
                         # Add to neighbors when all neighbors satisfy tot>=1500 or gap==1
                         for b in feature_dict.values():
