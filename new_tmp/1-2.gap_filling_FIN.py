@@ -15,7 +15,7 @@ fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1213test
 layer = iface.addVectorLayer(fn, '', 'ogr')
 
 ##<< Save layer as UCenter >
-path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1213test_new인구격자사용/인구격자00_부산인근_UCenter101.shp'
+path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1214test_new인구격자사용/인구격자00_부산인근_UCenter101_gap.shp'
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
 ##<< import UCluster layer >>
