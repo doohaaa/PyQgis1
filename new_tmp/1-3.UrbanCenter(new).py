@@ -1,7 +1,7 @@
 ## <<Urban Center >> ##  주석 미완성
 
 '''
-layer = 인구격자UCluster -> gap filling 한 파일 들고와야
+layer = 인구격자UCluster -> gap filling 한 파일 들고와서 ->101gap_날짜 로 저장
 ++
 수정해줘야 할 부분 : 변수에서 field 위치와 이름, 아래쪽 start 이후의 파일 경로
 '''
