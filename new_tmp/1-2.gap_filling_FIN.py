@@ -2,7 +2,7 @@
 
 '''
 layer = 인구격자
-레이어 클릭 후 실행 -> UCenter101_gap으로 저장
+실행 -> UCenter101_gap으로 저장
 ++
 수정해줘야 할 부분 : 변수에서 field 위치와 이름
 '''
@@ -11,11 +11,11 @@ from qgis.utils import iface
 from PyQt5.QtCore import QVariant
 
 ##<< import layer >>
-fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1213test_new인구격자사용/인구격자00_부산인근_UCluster102.shp'
+fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1215test_new인구격자사용/부울경/인구격자00_부산인근_UCluster102.shp'
 layer = iface.addVectorLayer(fn, '', 'ogr')
 
 ##<< Save layer as UCenter >
-path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1214test_new인구격자사용/인구격자00_부산인근_UCenter101_gap.shp'
+path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1215test_new인구격자사용/부울경/인구격자00_부산인근_UCenter101_gap.shp'
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
 ##<< import UCluster layer >>
