@@ -2,7 +2,7 @@
 
 실행 - emd 레이어 불러오기
 
-(-> 좌표 변경 :5179 (수동) -> processing - tool box - 유효성 검사(수동) -> error point 수정(수동) )
+(-> 좌표 변경 :5179 (수동) -> processing - tool box - 무결성 검증(수동) -> error point 수정(수동) )
 
 '''
 

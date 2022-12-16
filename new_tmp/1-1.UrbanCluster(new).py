@@ -105,7 +105,7 @@ def find_adjacent_grid():
             # Update the layer with new attribute values.
             layer.updateFeature(f)
 
-    ## layer.commitChanges()
+    layer.commitChanges()
     print('Processing complete. _find_adjacent_grid')
 
 
