@@ -13,7 +13,7 @@ tot_sum1: UCenter의 tot의 합
 is_cluster: 101=UCenter, 102=UCluster
 '''
 
-# 코드의 제일 앞 부분
+# (시간 측정 위함) 코드의 제일 앞 부분
 import time
 import datetime
 start = time.time()
@@ -383,7 +383,7 @@ layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
 print('Processing complete._UrbanCenter101')
 
-# 코드의 제일 뒷 부분
+# (시간 측정 위함) 코드의 제일 뒷 부분
 sec = time.time()-start
 times=str(datetime.timedelta(seconds=sec)).split(".")
 times = times[0]

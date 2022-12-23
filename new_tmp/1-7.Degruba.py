@@ -14,7 +14,7 @@ rank: 1=격자내에서 가장 큰 면적을 차지하는 개체
 city: 0=미분류, 1=city, 2=town, 3=rural
 '''
 
-# 코드의 제일 앞 부분
+# (시간 측정 위함) 코드의 제일 앞 부분
 import time
 import datetime
 start = time.time()
@@ -352,7 +352,7 @@ rural_classify()
 # town 분류
 town_classify()
 
-# 코드의 제일 뒷 부분
+# (시간 측정 위함) 코드의 제일 뒷 부분
 sec = time.time()-start
 times=str(datetime.timedelta(seconds=sec)).split(".")
 times = times[0]

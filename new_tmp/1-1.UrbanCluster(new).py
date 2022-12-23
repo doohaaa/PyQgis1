@@ -16,13 +16,13 @@ land: 클러스터의 번호
 is_cluster: 102=UCluster
 '''
 
-from qgis.utils import iface
-from PyQt5.QtCore import QVariant
-
-# 코드의 제일 앞 부분
+# (시간 측정 위함) 코드의 제일 앞 부분
 import time
 import datetime
 start = time.time()
+
+from qgis.utils import iface
+from PyQt5.QtCore import QVariant
 
 # Names of the fields
 _TOT_FIELD = 'TOT'
@@ -373,7 +373,7 @@ layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
 print('Processing complete._UrbanCluster 102')
 
-# 코드의 제일 뒷 부분
+# (시간 측정 위함) 코드의 제일 뒷 부분
 sec = time.time()-start
 times=str(datetime.timedelta(seconds=sec)).split(".")
 times = times[0]

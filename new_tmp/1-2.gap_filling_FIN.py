@@ -11,13 +11,14 @@
 gap: 1=gap_filling 된 셀
 '''
 
-# 코드의 제일 앞 부분
+# (시간 측정 위함) 코드의 제일 앞 부분
 import time
 import datetime
 start = time.time()
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
+
 
 ##<< import layer >> / 레이어 추가
 fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1216test_new인구격자사용/인구격자00_부울경인근_UCluster102.shp'
@@ -95,7 +96,7 @@ while (stop < 15):
 layer.commitChanges()
 print('Processing complete. _gap_filling')
 
-# 코드의 제일 뒷 부분
+# (시간 측정 위함) 코드의 제일 뒷 부분
 sec = time.time()-start
 times=str(datetime.timedelta(seconds=sec)).split(".")
 times = times[0]
