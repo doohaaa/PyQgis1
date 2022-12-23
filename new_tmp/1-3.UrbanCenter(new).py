@@ -1,16 +1,28 @@
-## <<Urban Center >> ##  주석 미완성
+## << Urban Center 101 >>
 
 '''
-layer = 인구격자UCluster -> gap filling 한 파일 들고와서 ->101gap_날짜 로 저장
+layer : gap filling 된 파일 들고와서 -> 101gap_날짜 로 저장
+
 ++
 수정해줘야 할 부분 : 변수에서 field 위치와 이름, 아래쪽 start 이후의 파일 경로
+
+< 필드 설명 >
+grid_num_1: 격자 이름의 숫자 중 앞 두자리
+grid_num_2: 격자 이름의 숫자 중 뒷 두자리
+tot_sum1: UCenter의 tot의 합
+is_cluster: 101=UCenter, 102=UCluster
 '''
+
+# (시간 측정 위함) 코드의 제일 앞 부분
+import time
+import datetime
+start = time.time()
 
 from qgis.utils import iface
 from PyQt5.QtCore import QVariant
 import time
 
-# Names of the fields
+# Names of the fields / 필드의 이름 지정
 _NAME_FIELD = 'GRID_1K_CD'
 _TOT_FIELD = 'TOT'
 _NEIGHBORS_FIELD = 'neighbors_'
@@ -20,7 +32,7 @@ _TOT_SUM1_FIELD = 'TOT_SUM1'
 _LAND_FIELD = 'land'
 _IS_CLUSTER_FIELD = 'is_cluster'
 
-# location of field
+# location of field / 필드의 위치 지정
 _WHERE_NAME_FIELD = 0
 _WHERE_TOT_FIELD = 5
 
@@ -36,9 +48,10 @@ _WHERE_GRID_N_1 = 13
 _WHERE_GRID_N_2 = 14
 _WHERE_TOT_SUM1_FIELD = 15
 
-
+# UCenter 묶음이 있는 리스트
 my_list101 = []
 
+# flag 필드 초기화
 def initialize_flag():
     layer.startEditing()
 
@@ -54,7 +67,7 @@ def initialize_flag():
     print('Processing complete. _initialized flag field')
 
 
-## Create derived variable
+## Create derived variable / 면으로 닿는 격자를 찾기 위한 파생변수 생성
 def create_derived_variable():
     ##<<  Create a derived variable to find the grid where the faces touch  >>
     layer_provider = layer.dataProvider()
@@ -74,7 +87,7 @@ def create_derived_variable():
             f['grid_num_2'] = expression2.evaluate(context)
             layer.updateFeature(f)
 
-##<< Find the adjacent grid with touching faces >>
+##<< Find the adjacent grid with touching faces >> / 면으로 닿는 인접한 격자 찾기
 def find_adjacent_grid():
     layer.startEditing()
 
@@ -89,7 +102,7 @@ def find_adjacent_grid():
     # Loop through all features and find features that touch each feature
     for f in feature_dict.values():
         geom = f.geometry()
-        # TOT above 1500 and gap filling cells
+        # TOT above 1500 and gap filling cells / 1500이 넘거나 gap_filling이 된 경우
         if (f.attributes()[_WHERE_TOT_FIELD] >= 1500 or f.attributes()[_WHERE_GAP_FIELD] == 1):
             # Find all features that intersect the bounding box of the current feature.
             intersecting_ids = index.intersects(geom.boundingBox())
@@ -101,20 +114,19 @@ def find_adjacent_grid():
                 # Look up the feature from the dictionary
                 intersecting_f = feature_dict[intersecting_id]
 
-                # add id in _ID_FIELD
+                # add id in _ID_FIELD / id필드에 해당 피쳐의 공간 인덱스 추가
                 if (f == intersecting_f):
                     f[_ID_FIELD] = intersecting_id
                     layer.updateFeature(f)
 
-                # For our purpose we consider a feature as 'neighbor' if it touches or
-                # intersects a feature. We use the 'disjoint' predicate to satisfy
-                # these conditions. So if a feature is not disjoint, it is a neighbor.
+                # 인접한 격자라면
                 if (not intersecting_f.geometry().disjoint(geom) ):
-                    # add intersecting grid only touched sides including itself
+                    # 인접한 격자 중 면으로 닿은 격자라면
                     if (f.attributes()[_WHERE_GRID_N_1] == intersecting_f.attributes()[_WHERE_GRID_N_1] or
                             f.attributes()[_WHERE_GRID_N_2] == intersecting_f.attributes()[_WHERE_GRID_N_2]):
 
                         # Add to neighbors when all neighbors satisfy tot>=1500 or gap==1
+                        # / 그 격자가 tot>=1500이거나 gap_filling되어 있다면 neighbors에 추가 해줘
                         for b in feature_dict.values():
                             if (b.attributes()[_WHERE_ID_FIELD]==intersecting_id):
                                 if (b.attributes()[_WHERE_TOT_FIELD] >= 1500 or
@@ -129,7 +141,7 @@ def find_adjacent_grid():
     layer.commitChanges()
     print('Processing complete. _find_adjacent_grid')
 
-##<< Create new field and initialization >>
+##<< Create new field and initialization >> / 새 필드 생성 후 초기화
 def create_new_field_and_initialization(name,type,value):
     ##<<  Create new field and initialization  >>
     layer_provider = layer.dataProvider()
@@ -145,7 +157,7 @@ def create_new_field_and_initialization(name,type,value):
     layer.dataProvider().changeAttributeValues(attr_map)
     print('Processing complete. _create_new_field_and_initialization')
 
-##<< Integrate neighbors >>
+##<< Integrate neighbors >> / 클러스터 통합 (묶음 찾기)
 def integration_neighbors():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -204,7 +216,7 @@ def integration_neighbors():
     layer.commitChanges()
     print('Processing complete. _integration_neighbors')
 
-##<< Calculate the sum of the tot in the cluster >>
+##<< Calculate the sum of the tot in the cluster >> /  묶음의 tot의 총합 찾기
 def tot_sum():
     # Create new field and initialization
     layer = iface.activeLayer()
@@ -261,7 +273,7 @@ def tot_sum():
     layer.commitChanges()
     print('Processing complete. _tot_sum1')
 
-##<< Find cluster with more than 50000 tot_sum1 >>
+##<< Find cluster with more than 50000 tot_sum1 >> / tot_sum1 필드에 클러스터의 총합이 50000 넘는 것 추가
 def find_50000above_clusters():
     layer = iface.activeLayer()
     layer.startEditing()
@@ -288,12 +300,12 @@ def find_50000above_clusters():
     print('Processing complete. _find 50000 above_clusters')
 
 
-## Select by Expression
+## Select by Expression /  표현식으로 피쳐 선책
 def select_by_Expression(exp):
     layer.selectByExpression(exp, QgsVectorLayer.SetSelection)
 
 
-## Fill value
+## Fill value / 필드에 값 채우기
 def fill_value(name,value):
     visited_index = layer.fields().indexFromName(name)
     attr_map = {}
@@ -312,7 +324,7 @@ fn = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1213test
 layer = iface.addVectorLayer(fn, '', 'ogr')
 '''
 ##<< Save layer as UCenter >
-path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1214test_new인구격자사용/인구격자00_부산인근_UCenter101_gap_1214tmp.shp'
+path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1216test_new인구격자사용/인구격자00_부산인근_UCenter101_gap_1216tmp.shp'
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
 ##<< import UCluster layer >>
@@ -337,7 +349,6 @@ integration_neighbors()
 tot_sum()
 
 
-
 ##<< Find cluster with more than 50000 tot_sum1 >>
 find_50000above_clusters()
 
@@ -352,7 +363,7 @@ fill_value(_NEIGHBORS_FIELD,0)
 
 ##<< Save selected part to vector layer >>
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,
-                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1214test_new인구격자사용/00_is_cluster_101_1214tmp.shp',
+                                                  'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1216test_new인구격자사용/00_is_cluster_101_1216tmp.shp',
                                                   "EUC-KR", layer.crs(), "ESRI Shapefile", onlySelected=True)
 
 
@@ -361,8 +372,8 @@ layer = iface.activeLayer()
 
 import processing
 
-infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1214test_new인구격자사용/00_is_cluster_101_1214tmp.shp"
-outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1214test_new인구격자사용/인구격자00_부산인근_UCenter101_dissolve_1214tmp.shp"
+infn = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1216test_new인구격자사용/00_is_cluster_101_1216tmp.shp"
+outfn2 = "C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1216test_new인구격자사용/인구격자00_부산인근_UCenter101_dissolve_1216tmp.shp"
 
 processing.run("native:dissolve", {'INPUT': infn, 'FIELD': [_WHERE_LAND_FIELD], 'OUTPUT': outfn2})
 
@@ -372,3 +383,8 @@ layer3 = iface.addVectorLayer(outfn2, '','ogr')
 
 print('Processing complete._UrbanCenter101')
 
+# (시간 측정 위함) 코드의 제일 뒷 부분
+sec = time.time()-start
+times=str(datetime.timedelta(seconds=sec)).split(".")
+times = times[0]
+print(times)
