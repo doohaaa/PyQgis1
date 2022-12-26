@@ -325,7 +325,7 @@ path = 'C:/Users/User/Desktop/지역분류체계/총정리/1_지역분류/1216te
 _writer = QgsVectorFileWriter.writeAsVectorFormat(layer,path,'utf-8',driverName='ESRI Shapefile')
 
 
-##<< import emd layer >> / 읍면동 레이어 추가
+##<< import intersection layer >> / intersection 레이어 추가
 layer = iface.addVectorLayer(path, '', 'ogr')
 
 # area 필드 생성
