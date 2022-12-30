@@ -300,7 +300,7 @@ def town_classify():
                     r_tot += a.attributes()[_WHERE_TOT_FIELD]
 
         # r_tot/t_tot <0.5 이고 c_tot/t_tot<0.5인 행정동에 대해
-        if (r_tot != 0 and t_tot != 0):
+        if (t_tot != 0):
             if (r_tot / t_tot < 0.5 and c_tot/t_tot<0.5):
                 for c in feature_dict.values():
                     if (c.attributes()[_WHERE_EMD_ID_FIELD] == i):
